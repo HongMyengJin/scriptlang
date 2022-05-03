@@ -3,7 +3,7 @@ from tkinter import*
 from tkinter import font
 
 g_Tk = Tk()
-g_Tk.geometry("400x600+450+100")
+g_Tk.geometry("400x400+450+100")
 
 def event_for_listbox(event):
     selection = event.widget.curselection()
