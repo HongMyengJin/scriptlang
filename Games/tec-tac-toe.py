@@ -5,12 +5,14 @@ from tkinter import messagebox
 currentToken = 0
 
 class cell(Label):
-    empty = True
-    flipvalue = False
-    def init():
-        flipvalue = True
 
-    def flip_Value(self):
+    def __init__(self):
+        self.flipvalue = False
+
+    def test(self):
+        self.flipvalue = True
+
+    def FlipValueReturn(self):
         return self.flipvalue
 
 def onOK(): # “확인”버튼핸들러
@@ -26,11 +28,13 @@ def onCancel(): # “취소”버튼핸들러
     root.destroy()
 
 
-Cells = [cell for i in range(1,10)]
+Cells = [cell() for i in range(1,10)]
 
+for i in range(0, 5):
+    Cells[i].test()
 
 for i in range(0, 9):
-    print(Cells[i].flip_Value(Cells[i]))
+    print(Cells[i].FlipValueReturn())
 
 
 
