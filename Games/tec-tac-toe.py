@@ -1,114 +1,70 @@
-from msilib.schema import ListBox
-from tkinter import*
-from tkinter import font
+from tkinter import *
+import tkinter.ttk as ttk
+from tkinter import messagebox
 
-g_Tk = Tk()
-g_Tk.geometry("400x400+450+100")
+currentToken = 0
 
-def event_for_listbox(event):
-    selection = event.widget.curselection()
-    if selection:
-        index = selection[0]
-        data = event.widget.get(index)
-        print(data)
+class cell(Label):
+    empty = True
+    flipvalue = False
+    def init():
+        flipvalue = True
 
-def InitScreen():
-    fontTitle = font.Font(g_Tk, size=18, weight='bold', family='바탕체')
-    fontNormal = font.Font(g_Tk, size=15, weight='bold')
+    def flip_Value(self):
+        return self.flipvalue
 
-    frameTitle = Frame(g_Tk, padx=10, pady=10, bg='#ff0000')
-    frameTitle.pack(side='top', fill='x')
-    frameCombo = Frame(g_Tk, pady=10, bg='#00ff00')
-    frameCombo.pack(side="top", fill="x")
-    frameEntry = Frame(g_Tk, pady=10, bg='#0000ff')
-    frameEntry.pack(side="top", fill="x")
-    frameList = Frame(g_Tk, padx=10, pady=10, bg='#ffff00')
-    frameList.pack(side="bottom", fill="both", expand=True)
+def onOK(): # “확인”버튼핸들러
+    global chkValue, strCheck
+    for i, v in enumerate(chkValue):
+        if v.get() == 1: # Variable 클래스: get()함수 사용
+            print(strCheck[i], "선택됨") 
+    messagebox.showinfo(title='알림', message='피자가 선택되었습니다')
+    root.destroy()
 
-    MainText = Label(frameTitle, font=fontTitle, text="[서울 근린시설 App")
-    MainText.pack(anchor="center", fill="both")
+def onCancel(): # “취소”버튼핸들러
+    messagebox.showinfo(title='알림', message='피자 선택이 취소되었습니다')
+    root.destroy()
 
-    global SearchListBox 
-    LBScrollbar = Scrollbar(frameCombo)
-    SearchListBox = Listbox(frameCombo, \
-    font=fontNormal, activestyle='none', width=10, height=1, borderwidth=12, relief='ridge', yscrollcommand=LBScrollbar.set) 
-    slist = ["도서관", "모범음식점", "마트", "문화공간"]
-    for i, s in enumerate(slist): 
-        SearchListBox.insert(i, s)
-    SearchListBox.pack(side='left', padx=10, expand=True, \
-    fill="both")
-    LBScrollbar.pack(side="left")
-    LBScrollbar.config(command=SearchListBox.yview) 
-    sendEmailButton = Button(frameCombo, font = fontNormal, text='이메일') 
-    sendEmailButton.pack(side='right', padx=10, fill='y') \
-    
-    global InputLabel
-    InputLabel = Entry(frameEntry, font=fontNormal, \
-     width = 26, borderwidth = 12, relief = 'ridge')
-    InputLabel.pack(side="left", padx=10, expand=True)
 
-    SearchButton = Button(frameEntry, font=fontNormal, \
-        text="검색", command=onSearch)
-    SearchButton.pack(side="right",padx=10,expand=True, fill = 'y')
+Cells = [cell for i in range(1,10)]
 
-    global listBox
-    LBScrollbar = Scrollbar(frameList)
-    listBox = Listbox(frameList, selectmode='extended',\
-        font=fontNormal, width=10, height=15,\
-            borderwidth=12, relief='ridge',yscrollcommand=LBScrollbar.set)
-    listBox.bind('<<ListboxSelect>>',event_for_listbox)
-    listBox.pack(side='left', anchor='n',expand=True,fill='x')
-    LBScrollbar.pack(side='right',fill='y')
-    LBScrollbar.config(command=listBox.yview)
 
-def event_for_listbox(event):
-    selection = event.widget.curselection()
-    if selection:
-        index = selection[0]
-        data = event.widget.get(index)
-        print(data)
+for i in range(0, 9):
+    print(Cells[i].flip_Value(Cells[i]))
 
-def onSearch(): # "검색" 버튼 이벤트처리
-    global SearchListBox
-    sels = SearchListBox.curselection()
-    iSearchIndex = \
-        0 if len(sels) == 0 else SearchListBox.curselection()[0]
-    if iSearchIndex == 0: 
-        SearchLibrary() 
-    elif iSearchIndex == 1: 
-        pass 
-    elif iSearchIndex == 2: 
-        pass 
-    elif iSearchIndex == 3: 
-        pass # 유틸리티 함수: 문자열 내용 있을 때만 사용
-def getStr(s): 
-    return '' if not s else s
 
-def SearchLibrary(): # "검색" 버튼 -> "도서관"
-    from xml.etree import ElementTree
 
-    global listBox
-    listBox.delete(0,listBox.size()) 
 
-    with open('서울도서관.xml', 'rb') as f: 
-        strXml = f.read().decode('utf-8')
-    parseData = ElementTree.fromstring(strXml) 
 
-    elements = parseData.iter('row')
-    i = 1
-    for item in elements: # " row“ element들
-        part_el = item.find('CODE_VALUE')
+root = Tk()
+root.title('tec-tac-toe')
 
-        if InputLabel.get() not in part_el.text: 
-            continue
+frameTitle = Frame(root, padx=120, pady=120)
 
-        _text = '[' + str(i) + '] ' + \
-            getStr(item.find('LBRRY_NAME').text) + \
-            ' : ' + getStr(item.find('ADRES').text) + \
-            ' : ' + getStr(item.find('TEL_NO').text)
-        listBox.insert(i-1, _text)
-        i = i+1
+frameTitle.grid(row=0, column=0, sticky='w')
+Label(frameTitle).grid(row=0, column=0)
 
-InitScreen()
-g_Tk.mainloop()
+# frameCombo = Frame(root, padx=10, pady=10)
+# frameCombo.grid(row=1, column=0, sticky='news') 
+# combo_str = ['수퍼수프림', '감자피자', '고구마피자'] 
+# combo = ttk.Combobox(frameCombo, values=combo_str) 
+# combo.pack(side=LEFT, expand=True, fill='both') 
+# combo.set('피자 선택')
 
+# frameCheckbox = Frame(root, padx=10, pady=10)
+# frameCheckbox.grid(row=2, column=0) 
+# chkValue = [] 
+# strCheck = ['치즈 추가', '피클 추가', '콜라 추가']
+# for i, s in enumerate(strCheck): chkValue.append(IntVar()) # Variable 클래스: get(), set() 함수 사용
+# ttk.Checkbutton(frameCheckbox, text=s, variable=chkValue[i]).grid(row = 0, column=i)
+# frameButtons = Frame(root, padx=10, pady=10, bg='#a0a0a0')
+# frameButtons.grid(row=3, column=0, sticky='news')
+# Button(frameButtons, command=onOK, text='확인').pack(side=LEFT, expand=True, fill='both')
+# Button(frameButtons, command=onCancel, text='취소').pack(side=RIGHT, expand=True, fill='both') 
+
+frameTitle = Frame(root, padx=120, pady=120)
+Label(frameTitle).grid(row=0, column=0)
+
+
+
+root.mainloop()
