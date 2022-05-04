@@ -5,6 +5,9 @@ from tkinter import messagebox
 
 currentToken = 0
 
+def click(event):
+    print("클릭위치", event.x, event.y)
+
 class cell(Label):
     global img
     global root
@@ -13,7 +16,8 @@ class cell(Label):
         self.token = ''
         self.num = int(num)
         self.imgLabel = Label(root, image = img[0])
-
+        super().__init__(root)
+        super().bind("<Button-1>", click)
     @property
     def GetToken(self):
         return self.token
@@ -64,6 +68,7 @@ class cell(Label):
     
     def Render(self):
         self.imgLabel.grid(row= (int)(self.num / 3), column= (int)(self.num % 3))
+        super().grid(row = self.num // 3, column = self.num % 3)
 
 
 
@@ -90,12 +95,26 @@ imgLabel = [Label(root, image = img[0]) for i in range(1, 10)]
 frameTitle = Frame(root, padx=120, pady=120)
 Label(frameTitle).grid(row=0, column=0)
 
-a = input("행과 열을 입력하세요.").split()
 
-# #행
-# a[0] 
-# #열
-# a[1]
+ 
+ 
+
+# for i in range(0, 3):
+#      for j in range(0, 3):
+#         cells[i][j].bind("<Button-1>") 
+
+# a = input("행과 열을 입력하세요.").split()
+
+# # #행
+# # a[0] 
+# # #열
+# # a[1]
 
 cells[0][0].flip('O')
+
+
+ 
+
+ #왼쪽 마우스 버튼 바인딩
+
 root.mainloop()
