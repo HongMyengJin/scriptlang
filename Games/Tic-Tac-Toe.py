@@ -12,12 +12,41 @@ class cell(Label):
     global img
     global root
     global cells
+    
+    def flip(self, event): # 누가 뒤집었지? 
+        global currentToken
+        
+        row = (self.num) // 3
+        column = (self.num) % 3
+
+        if  self.token != '':
+            return False # 이미 뒤집은 패
+        if currentToken % 2 == 0:
+            self.token = 'O'
+            cells[row][column].token = self.token
+        else:
+            self.token = 'X'
+            cells[row][column].token = self.token
+
+        if    self.token == 'O':
+            self.imgLabel = Label(root, image = img[1])
+        elif  self.token == 'X':
+            self.imgLabel = Label(root, image = img[2])
+        
+        currentToken = currentToken + 1
+
+        for i in range(0, 3):
+            for j in range(0, 3):
+                cells[i][j].Render()
+        if True == cell.Win(self):
+            print("이김!!!!!!!!!")
+        
     def __init__(self, num):
         self.token = ''
         self.num = int(num)
         self.imgLabel = Label(root, image = img[0])
         super().__init__(root)
-        super().bind("<Button-1>", click)
+        super().bind("<Button-1>", self.flip)
     @property
     def GetToken(self):
         return self.token
@@ -29,16 +58,17 @@ class cell(Label):
         # 첫번째꺼 저장 뒤에 2개 같으면
 
         # 행, 열
-        for j in range(0, 2):
-            for i in range(0, 3):
-                if j == 0:
-                    if cells[row][column].token != cells[i][column].token:
-                        break 
-                else:
-                       if cells[row][column].token != cells[row][i].token:
-                        break
-            else:
-                return True # 3개 이상
+        for i in range(0, 3):
+            if  cells[row][column].token != cells[i][column].token:
+                break
+        else:
+            return True # 3개 이상
+        for i in range(0, 3):
+            if cells[row][column].token != cells[row][i].token:
+                break 
+        else:
+            return True # 3개 이상
+
 
         # 대각선
         if  (row == column) | (abs(row - column) == 2): # 대각선 검사를 할지 결정   # 행, 열이 같거나 행과 열의 차 = 2         
@@ -52,19 +82,6 @@ class cell(Label):
                 return True
 
             return False
-
-    def flip(self, event): # 누가 뒤집었지? 
-        if  self.token != '':
-            return False # 이미 뒤집은 패
-        self.token = event
-        if    self.token == 'O':
-            self.imgLabel = Label(root, image = img[1])
-        elif  self.token == 'X':
-            self.imgLabel = Label(root, image = img[2])
-        
-        root.update()
-        return  cell.Win(self)# 새로 등록된 패 #혹시 모르니까 오류뜨면 여기일듯
-        
     
     def Render(self):
         self.imgLabel.grid(row= (int)(self.num / 3), column= (int)(self.num % 3))
@@ -84,6 +101,7 @@ img = [PhotoImage(file = "empty.gif"), PhotoImage(file = "o.gif"), PhotoImage(fi
 #cells = [cell(i) for i in range(0,9)]
 
 cells = [[cell(i * 3 + j) for i in range(0, 3)] for j in range(0, 3)]
+
 
 for i in range(0, 3):
     for j in range(0, 3):
@@ -110,7 +128,7 @@ Label(frameTitle).grid(row=0, column=0)
 # # #열
 # # a[1]
 
-cells[0][0].flip('O')
+#cells[0][0].flip('O')
 
 
  
