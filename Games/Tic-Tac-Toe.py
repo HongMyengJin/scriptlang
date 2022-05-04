@@ -67,19 +67,13 @@ class cell(Label):
          
         #대각선 => 없으면 False
 
-         
-
-
-
-    # def flip(self, event):
-
-cells = [cell() for i in range(1,10)]
-
-
+root = Tk()
+root.title('tec-tac-toe')      
 img = [PhotoImage(file = "empty.gif"), PhotoImage(file = "o.gif"), PhotoImage(file = "x.gif")]
 
-root = Tk()
-root.title('tec-tac-toe')
+cells = [cell(i) for i in range(1,10)]
+
+
 
 #frameTitle = Frame(root, padx=120, pady=120)
 
@@ -88,7 +82,7 @@ root.title('tec-tac-toe')
 
 
 
-imgLabel = [Label(root, image = img[2]) for i in range(1, 10)]
+imgLabel = [Label(root, image = img[0]) for i in range(1, 10)]
 
 
         
