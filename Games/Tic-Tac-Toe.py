@@ -19,19 +19,20 @@ class cell(Label):
         row = (self.num) // 3
         column = (self.num) % 3
 
-        if  self.token != '':
-            print(self.token)
+        if  cells[row][column].token != '':
             return False # 이미 뒤집은 패
-        if currentToken % 2 == 0:
-            self.token = 'O'
-            # cells[row][column].token = self.token
+        if  currentToken % 2 == 0:
+            #self.token = 'O'
+            cells[row][column].token = 'O'
+            print("row: ", row, "column", column)
         else:
-            self.token = 'X'
-            # cells[row][column].token = self.token
+            #self.token = 'X'
+            cells[row][column].token = 'X'
+            print("row: ", row, "column", column)
 
-        if    self.token == 'O':
+        if  cells[row][column].token == 'O':
             self.imgLabel = Label(root, image = img[1])
-        elif  self.token == 'X':
+        elif  cells[row][column].token == 'X':
             self.imgLabel = Label(root, image = img[2])
         
         currentToken = currentToken + 1
@@ -46,9 +47,9 @@ class cell(Label):
         self.token = ''
         self.num = int(num)
         self.imgLabel = Label(root, image = img[0])
-        super().__init__(root, padx=7, pady=7)
+        super().__init__(root, padx=14, pady=7.2)
         super().bind("<Button-1>", self.flip)
-        super().place(width=7,height=7)
+        super().place(width=14,height=7.2)
     def GetToken(self):
         return self.token
     def Win(self):
@@ -72,17 +73,18 @@ class cell(Label):
 
 
         # 대각선
-        if  (row == column) | (abs(row - column) == 2): # 대각선 검사를 할지 결정   # 행, 열이 같거나 행과 열의 차 = 2         
+        if  (row == column): # 대각선 검사를 할지 결정   # 행, 열이 같다    
             for i in range(1, 3):
-                if cells[i][i].token != cells[0][0]:
+                if cells[i][i].token != cells[0][0].token:
                     break
             else:
                 return True
-
-            if (cells[0][2] == cells[1][1] == cells[2][0]):
+        elif (abs(row - column) == 2): #행과 열의 차 = 2     
+            if (cells[0][2].token == cells[1][1].token == cells[2][0].token):
                 return True
 
-            return False
+
+        return False
     
     def Render(self):
         self.imgLabel.grid(row= (int)(self.num / 3), column= (int)(self.num % 3))
@@ -115,7 +117,8 @@ frameTitle = Frame(root, padx=120, pady=120)
 Label(frameTitle).grid(row=0, column=0)
 
 
- 
+frame= Frame(root, padx=10, pady=10)
+Label(frame).grid(row=0, column=0)
  
 
 # for i in range(0, 3):
