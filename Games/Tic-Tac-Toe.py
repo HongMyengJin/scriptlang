@@ -12,6 +12,7 @@ class cell(Label):
     global cells
     global texts
     
+    
     def flip(self, event): # 누가 뒤집었지? 
         global currentToken
         
@@ -39,14 +40,15 @@ class cell(Label):
         for i in range(0, 3):
             for j in range(0, 3):
                 cells[i][j].Render()
+                
         if True == cell.Win(self):
             if currentToken%2 == 0:
                 print("dlrla")
                 texts = "X가 이겼습니다!"
             else:
                 texts = "O가 이겼습니다!"
-            Label(root, text=texts).grid(row=4, column=1) 
-    
+            Label(root, text=texts).place( y = 130)
+                             
         
     def __init__(self, num):
         self.token = ''
@@ -55,6 +57,7 @@ class cell(Label):
         super().__init__(root, padx=14, pady=7.2)
         super().bind("<Button-1>", self.flip)
         super().place(width=14,height=7.2)
+        
     def GetToken(self):
         return self.token
     def Win(self):
@@ -112,17 +115,17 @@ img = [PhotoImage(file = "empty.gif"), PhotoImage(file = "o.gif"), PhotoImage(fi
 
 cells = [[cell(i * 3 + j) for i in range(0, 3)] for j in range(0, 3)]
 
-
 for i in range(0, 3):
     for j in range(0, 3):
         cells[i][j].Render()
+
 
 imgLabel = [Label(root, image = img[0]) for i in range(1, 10)]
 
 
 
 #frameTitle.grid(row=0, column=0,sticky='w')
-Label(root, text=texts).grid(row=4, column=1) 
+Label(root, text=texts).place( y = 130) 
  
 
 # for i in range(0, 3):
