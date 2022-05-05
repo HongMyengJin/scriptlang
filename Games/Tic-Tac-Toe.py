@@ -1,34 +1,32 @@
+from contextlib import nullcontext
 from doctest import ELLIPSIS_MARKER
 from tkinter import *
 import tkinter.ttk as ttk
 from tkinter import messagebox
 
 currentToken = 0
-texts = 'X차례'
-
+texts = 'O차례'
+Quit = False
 class cell(Label):
     global img
     global root
     global cells
     global texts
-    
-    
+    global Labels
     def flip(self, event): # 누가 뒤집었지? 
         global currentToken
-        
+        global Quit
         row = (self.num) // 3
         column = (self.num) % 3
 
-        if  cells[row][column].token != '':
-            return False # 이미 뒤집은 패
+        if  cells[row][column].token != '' or Quit:
+            return False # 이미 뒤집은 패`
         if  currentToken % 2 == 0:
             #self.token = 'O'
             cells[row][column].token = 'O'
-            print("row: ", row, "column", column)
         else:
             #self.token = 'X'
             cells[row][column].token = 'X'
-            print("row: ", row, "column", column)
 
         if  cells[row][column].token == 'O':
             self.imgLabel = Label(root, image = img[1])
@@ -40,26 +38,48 @@ class cell(Label):
         for i in range(0, 3):
             for j in range(0, 3):
                 cells[i][j].Render()
-                
         if True == cell.Win(self):
             if currentToken%2 == 0:
-                print("dlrla")
-                texts = "X가 이겼습니다!"
+                texts = "X승리!게임 끝!!"
             else:
-                texts = "O가 이겼습니다!"
-            Label(root, text=texts).place( y = 130)
-                             
+                texts = "O승리!게임 끝!!"
+            Label(root, text=texts).place(x = 15, y = 130)
+            Quit = True
+            return Quit
+        elif True == cell.Tie(self):
+            texts = "비김!게임 끝!"
+            Label(root, text=texts, width = 25).place(x = -30, y = 130)
+            Quit = True
+            return Quit
+        else:
+            if currentToken%2 == 0:
+                    texts = "O차례"
+            else:
+                    texts = "X차례"
+        Label(root, text=texts, width = 25).place(x = -30, y = 130) 
+
+        return False
+        #QLabels.text = texts
         
     def __init__(self, num):
         self.token = ''
         self.num = int(num)
         self.imgLabel = Label(root, image = img[0])
+        self.txtLable = Label(root, text= texts, width = 25).place(x = -30, y = 130) 
         super().__init__(root, padx=14, pady=7.2)
         super().bind("<Button-1>", self.flip)
         super().place(width=14,height=7.2)
-        
+
     def GetToken(self):
         return self.token
+    
+    def Tie(self): # 동점이면 True
+        if currentToken == 9:
+            return True
+        else:
+            return False
+                    
+
     def Win(self):
         row = (self.num) // 3
         column = (self.num) % 3
@@ -111,22 +131,21 @@ root.geometry('120x150')
 root.title('tic-tac-toe')      
 img = [PhotoImage(file = "empty.gif"), PhotoImage(file = "o.gif"), PhotoImage(file = "x.gif")]
 
+
 #cells = [cell(i) for i in range(0,9)]
 
 cells = [[cell(i * 3 + j) for i in range(0, 3)] for j in range(0, 3)]
+
 
 for i in range(0, 3):
     for j in range(0, 3):
         cells[i][j].Render()
 
-
 imgLabel = [Label(root, image = img[0]) for i in range(1, 10)]
 
 
 
-#frameTitle.grid(row=0, column=0,sticky='w')
-Label(root, text=texts).place( y = 130) 
- 
+
 
 # for i in range(0, 3):
 #      for j in range(0, 3):
