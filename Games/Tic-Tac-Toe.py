@@ -20,13 +20,14 @@ class cell(Label):
         column = (self.num) % 3
 
         if  self.token != '':
+            print(self.token)
             return False # 이미 뒤집은 패
         if currentToken % 2 == 0:
             self.token = 'O'
-            cells[row][column].token = self.token
+            # cells[row][column].token = self.token
         else:
             self.token = 'X'
-            cells[row][column].token = self.token
+            # cells[row][column].token = self.token
 
         if    self.token == 'O':
             self.imgLabel = Label(root, image = img[1])
@@ -45,9 +46,9 @@ class cell(Label):
         self.token = ''
         self.num = int(num)
         self.imgLabel = Label(root, image = img[0])
-        super().__init__(root)
+        super().__init__(root, padx=7, pady=7)
         super().bind("<Button-1>", self.flip)
-    @property
+        super().place(width=7,height=7)
     def GetToken(self):
         return self.token
     def Win(self):
