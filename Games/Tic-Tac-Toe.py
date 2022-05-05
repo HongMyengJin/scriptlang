@@ -4,14 +4,13 @@ import tkinter.ttk as ttk
 from tkinter import messagebox
 
 currentToken = 0
-
-def click(event):
-    print("클릭위치", event.x, event.y)
+texts = 'X차례'
 
 class cell(Label):
     global img
     global root
     global cells
+    global texts
     
     def flip(self, event): # 누가 뒤집었지? 
         global currentToken
@@ -41,7 +40,13 @@ class cell(Label):
             for j in range(0, 3):
                 cells[i][j].Render()
         if True == cell.Win(self):
-            print("이김!!!!!!!!!")
+            if currentToken%2 == 0:
+                print("dlrla")
+                texts = "X가 이겼습니다!"
+            else:
+                texts = "O가 이겼습니다!"
+            Label(root, text=texts).grid(row=4, column=1) 
+    
         
     def __init__(self, num):
         self.token = ''
@@ -98,6 +103,8 @@ class cell(Label):
         #대각선 => 없으면 False
 
 root = Tk()
+
+root.geometry('120x150')
 root.title('tic-tac-toe')      
 img = [PhotoImage(file = "empty.gif"), PhotoImage(file = "o.gif"), PhotoImage(file = "x.gif")]
 
@@ -113,12 +120,9 @@ for i in range(0, 3):
 imgLabel = [Label(root, image = img[0]) for i in range(1, 10)]
 
 
-frameTitle = Frame(root, padx=120, pady=120)
-Label(frameTitle).grid(row=0, column=0)
 
-
-frame= Frame(root, padx=10, pady=10)
-Label(frame).grid(row=0, column=0)
+#frameTitle.grid(row=0, column=0,sticky='w')
+Label(root, text=texts).grid(row=4, column=1) 
  
 
 # for i in range(0, 3):
