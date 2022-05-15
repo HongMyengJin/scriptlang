@@ -1,8 +1,33 @@
 from tkinter import *
 
+def Button_Click(event):
+    global texts
+    global cells
+    global Gaming
+    global process_button
+    global Turn
+    if Gaming == False and texts != "새로시작":
+        Gaming = True
+        texts = "새로시작"
+        Turn = "yellow"
+        process_button = Button(frame2, width = 10, height = 1, text = texts)
+        process_button.grid(row = 0, column=0)
+        process_button.bind("<Button-1>", Button_Click) 
+    elif Gaming == True and texts == "새로시작":
+        cells = []
+        for i in range(6):
+                cells_col = []
+                for j in range(7):
+                    # cell = j
+                    cell = Cell(frame1, i, j, width=20, height=20)
+                    cells_col.append(cell)
+                    cell.grid(row=i, column=j)
+                cells.append(cells_col)
+
 
 Turn = "yellow"
-texts = '새로 시작'
+texts = "새로시작"
+Gaming = True
 class Cell(Canvas):
     def __init__(self, parent, row, col, width = 20, height = 20):
         Canvas.__init__(self, parent, width = width, height = height, \
@@ -16,12 +41,16 @@ class Cell(Canvas):
         self.bind("<Button-1>", self.clicked)
     def Check_Win(self):
         global cells
+        global Gaming
         #좌우 4개
         row = self.row
         col = self.col
         Same = 0
         value = 1
-        #행
+        
+        checkList = [] # 행 * 열 크기 +  열 크기
+
+        #열
         for i in range(-1, 2, 2):
             col = self.col
             row = self.row
@@ -29,11 +58,18 @@ class Cell(Canvas):
                 col = col + i
                 if cells[self.row][self.col].color == cells[row][col].color:
                     Same = Same + 1
+                    checkList.append(row * 7 + col)
                 else:
                     break
-        # print(Same)
-        # Same = 0 
-        #열
+        if  Same == 3:
+            for i in range(0, len(checkList)):
+                cells[checkList[i] // 7][checkList[i] % 7].configure(bg = self.color)
+            cells[self.row][self.col].configure(bg = self.color)
+            return True
+
+        #행
+        checkList = []
+        Same = 0
         for i in range(-1, 2, 2):
             row = self.row
             col = self.col
@@ -41,17 +77,17 @@ class Cell(Canvas):
                 row = row + i
                 if cells[self.row][self.col].color == cells[row][col].color:
                     Same = Same + 1
+                    checkList.append(row * 7 + col)
                 else:
                     break
-        # print(Same)
-        # Same = 0
-        #정대각선 
-        # x: 1, y: -1
-        # x: -1, y: 1
 
-        # x: -1, y: -1
-        # x: 1, y: 1
-        #대각선 x: 
+        if  Same == 3:
+            for i in range(0, len(checkList)):
+                cells[checkList[i] // 7][checkList[i] % 7].configure(bg = self.color)
+            cells[self.row][self.col].configure(bg = self.color)
+            return True
+
+        checkList = []
         Same = 0
         for i in range(-1, 2, 2): 
             row = self.row
@@ -61,12 +97,18 @@ class Cell(Canvas):
                 col = col + i
                 if cells[self.row][self.col].color == cells[row][col].color:
                     Same = Same + 1
+                    checkList.append(row * 7 + col)
                 else:
                     break
-        
-        print("반대 대각선: ", Same)
-        Same = 0
 
+        if  Same == 3:
+            for i in range(0, len(checkList)):
+                cells[checkList[i] // 7][checkList[i] % 7].configure(bg = self.color)
+            cells[self.row][self.col].configure(bg = self.color)
+            return True
+
+        checkList = []
+        Same = 0
         for i in range(-1, 2, 2): 
             row = self.row
             col = self.col
@@ -75,29 +117,45 @@ class Cell(Canvas):
                 col = col - i
                 if cells[self.row][self.col].color == cells[row][col].color:
                     Same = Same + 1
+                    checkList.append(row * 7 + col)
                 else:
                     break
-        print("정 대각선: ", Same)
-        Same = 0
+
+        if  Same == 3:
+            for i in range(0, len(checkList)):
+                cells[checkList[i] // 7][checkList[i] % 7].configure(bg = self.color)
+            cells[self.row][self.col].configure(bg = self.color)
+            return True
+
 
         print('\n')
         return False
     def clicked(self, event): # red 또는 yellow 돌 놓기.
+        global Gaming
         global Turn
+        global process_button
+        global texts
         #nextcolor = "red" if self.color != "red" else "yellow"
-
+        if Gaming == False:
+            return
         if self.color != "white":
             return
             
         Turn = "red" if Turn != "red" else "yellow"
         self.setColor(Turn)
-        self.Check_Win()
+        if  self.Check_Win():
+           texts = self.color + " 승리!!"
+           process_button = Button(frame2, width = 10, height = 1, text = texts)
+           #process_button.text.set(texts)
+           process_button.grid(row = 0, column=0)
+           process_button.bind("<Button-1>", Button_Click) 
+           Gaming = False
     def setColor(self, color):
         self.delete("oval") # https://pythonguides.com/python-tkinter-canvas/
         self.color = color
         self.create_oval(4, 4, 20, 20, fill = self.color, tags="oval")
     
-        
+
 
 MAXROW = 6
 MAXCOL = 7
@@ -122,7 +180,8 @@ frame2 = Frame(window)
 frame2.pack()
 
 
-process_button = Button(frame2, width = 10, height = 1, text = texts)
+process_button = Button(frame2, width = 10, height = 1, text = "새로 시작")
+process_button.bind("<Button-1>", Button_Click) 
 
 process_button.grid(row = 0, column=0)
 window.mainloop() # Create an event loop
