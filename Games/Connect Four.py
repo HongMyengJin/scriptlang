@@ -61,7 +61,7 @@ class Cell(Canvas):
                     checkList.append(row * 7 + col)
                 else:
                     break
-        if  Same == 3:
+        if  Same >= 3:
             for i in range(0, len(checkList)):
                 cells[checkList[i] // 7][checkList[i] % 7].configure(bg = self.color)
             cells[self.row][self.col].configure(bg = self.color)
@@ -81,7 +81,7 @@ class Cell(Canvas):
                 else:
                     break
 
-        if  Same == 3:
+        if  Same >= 3:
             for i in range(0, len(checkList)):
                 cells[checkList[i] // 7][checkList[i] % 7].configure(bg = self.color)
             cells[self.row][self.col].configure(bg = self.color)
@@ -101,7 +101,7 @@ class Cell(Canvas):
                 else:
                     break
 
-        if  Same == 3:
+        if  Same >= 3:
             for i in range(0, len(checkList)):
                 cells[checkList[i] // 7][checkList[i] % 7].configure(bg = self.color)
             cells[self.row][self.col].configure(bg = self.color)
@@ -121,7 +121,7 @@ class Cell(Canvas):
                 else:
                     break
 
-        if  Same == 3:
+        if  Same >= 3:
             for i in range(0, len(checkList)):
                 cells[checkList[i] // 7][checkList[i] % 7].configure(bg = self.color)
             cells[self.row][self.col].configure(bg = self.color)
@@ -130,6 +130,14 @@ class Cell(Canvas):
 
         print('\n')
         return False
+
+    def Check_Tie(self):
+        global cells
+        for i in range(0, 6):
+            for j in range(0, 7):
+                if cells[i][j].color == "white":
+                    return False
+        return True
     def clicked(self, event): # red 또는 yellow 돌 놓기.
         global Gaming
         global Turn
@@ -150,11 +158,20 @@ class Cell(Canvas):
            process_button.grid(row = 0, column=0)
            process_button.bind("<Button-1>", Button_Click) 
            Gaming = False
+        elif self.Check_Tie():
+           texts = " 비김!!"
+           process_button = Button(frame2, width = 10, height = 1, text = texts)
+           #process_button.text.set(texts)
+           process_button.grid(row = 0, column=0)
+           process_button.bind("<Button-1>", Button_Click) 
+           Gaming = False
+        
+
     def setColor(self, color):
         self.delete("oval") # https://pythonguides.com/python-tkinter-canvas/
         self.color = color
         self.create_oval(4, 4, 20, 20, fill = self.color, tags="oval")
-    
+
 
 
 MAXROW = 6
