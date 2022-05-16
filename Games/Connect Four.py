@@ -87,6 +87,7 @@ class Cell(Canvas):
             cells[self.row][self.col].configure(bg = self.color)
             return True
 
+#정방향
         checkList = []
         Same = 0
         for i in range(-1, 2, 2): 
@@ -106,7 +107,7 @@ class Cell(Canvas):
                 cells[checkList[i] // 7][checkList[i] % 7].configure(bg = self.color)
             cells[self.row][self.col].configure(bg = self.color)
             return True
-
+#반대방향
         checkList = []
         Same = 0
         for i in range(-1, 2, 2): 
@@ -147,6 +148,8 @@ class Cell(Canvas):
         if Gaming == False:
             return
         if self.color != "white":
+            return
+        elif not(self.row == 5 or cells[self.row + 1][self.col].color != "white"):
             return
             
         Turn = "red" if Turn != "red" else "yellow"
