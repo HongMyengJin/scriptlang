@@ -7,37 +7,49 @@ class Hangman:
     global hiddenWord
     global guessWord
     global nMissedLetters
-    global nMissChar
     global finished
     global words
     global canvas
     global texts
     global textlist
     global miss
+
     
     def __init__(self):
         self.draw()
         
     def setWord(self):
+        global nMissChar
+        global nCorrectChar
+        global InsertLetter
+        global miss
+        global nMissedLetters
+        global canvasname
+        global guessword
+        global hiddenword
+        
+        canvas.delete("hangman")
         hiddenword = random.choice(words)
         hiddenword = list(hiddenword)
         print(hiddenword)
+        guessword = []
         guessword = ['*']*len(hiddenword)
         nMissChar = 0
         nCorrectChar = 0
         nMissedLetters = []
         textlist = ' '
         textlist = texts + ''.join(guessword)
-        canvasname = canvas.create_text(200,190,text=textlist)
-
         miss = canvas.create_text(200,200,text='')
+        canvasname = canvas.create_text(200,190,text=textlist)
+        InsertLetter = []
+        nMissChar = 0
         self.draw()
 
     def draw(self):
         global canvasname
         global miss
         # 한꺼번에 지울 요소들을 "hangman" tag로 묶어뒀다가 일괄 삭제.
-        canvas.delete("hangman")
+        #canvas.delete("hangman")
         
         # 인자 : (x1,y1)=topleft, (x2,y2)=bottomright, start=오른쪽이 0도(반시계방향), extent=start부터 몇도까지인지
         #    style='pieslice'|'chord'|'arc'
@@ -107,11 +119,12 @@ print(hiddenword)
 guessword = ['*']*len(hiddenword)
 nMissChar = 0
 nCorrectChar = 0
+InsertLetter = []
 nMissedLetters = []
 texts = "단어 추측 : "
 textlist = ' '
 
-
+# 틀린거 + 맞는거 둘 다 비교
 textlist = texts + ''.join(guessword)
 canvasname = canvas.create_text(200,190,text=textlist)
 
@@ -121,11 +134,14 @@ def processKeyEvent(event):
     global nCorrectChar
     global nMissChar
     #global hangman
-    if event.char >= 'a' and event.char <= 'z':
+    if event.char >= 'a' and event.char <= 'z' and nMissChar < 7:
+            if event.char in InsertLetter:
+                return
+            InsertLetter.append(event.char)
             check =0
             for i in range(0,len(hiddenword)):
                 if event.char == hiddenword[i]:
-                    check = 1
+                    check = 1 # 맞는 단어
                     nCorrectChar = nCorrectChar+ 1
                     print(guessword)
                     guessword[i] = hiddenword[i]
@@ -133,21 +149,30 @@ def processKeyEvent(event):
                     textlist = texts + ''.join(guessword)
                     canvas.itemconfig(canvasname,text=textlist)
                     if nCorrectChar == len(hiddenword):
-                         canvas.itemconfig(miss,text="계속하려면 Enter를 누르세요")
+                        textlist = ''.join(guessword) + " 맞았습니다"
+                        canvas.itemconfig(canvasname,text = textlist, tags = "hangman") 
+                        canvas.itemconfig(miss,text="계속하려면 Enter를 누르세요", tags = "hangman")
+                        return
                          
-            if check == 0:
+            if check == 0: # 틀린 단어
                 nMissedLetters.append(event.char)
                 nMissChar = nMissChar  + 1 
                 print(nMissedLetters)
                 canvas.itemconfig(miss,text=nMissedLetters)
                 if nMissChar == 7:
-                    canvas.itemconfig(canvasname,text=hiddenword)
-                    canvas.itemconfig(miss,text="계속하려면 Enter를 누르세요") 
+                    #textlist = 
+                    canvas.itemconfig(canvasname,text= list("정답:") + hiddenword, tags = "hangman")
+                    canvas.itemconfig(miss,text="계속하려면 Enter를 누르세요", tags = "hangman") 
+                    return
+                else:
+                    textlist = "틀린 단어:" + ''.join(nMissedLetters)
+                    canvas.itemconfig(miss,text = textlist, tags = "hangman") 
+            
+            
+            hangman.draw()    
+                   
                     
-                    
-            hangman.draw()     
-                    
-    elif event.keycode == 13:
+    elif event.keycode == 13 and (nMissChar == 7 or nCorrectChar == len(hiddenword)):
             hangman.setWord()
             
 
