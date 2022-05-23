@@ -128,7 +128,7 @@ textlist = ' '
 textlist = texts + ''.join(guessword)
 canvasname = canvas.create_text(200,190,text=textlist)
 
-miss = canvas.create_text(200,200,text='')
+miss = canvas.create_text(200,205,text='')
 
 def processKeyEvent(event):  
     global nCorrectChar
@@ -160,10 +160,8 @@ def processKeyEvent(event):
                 print(nMissedLetters)
                 canvas.itemconfig(miss,text=nMissedLetters)
                 if nMissChar == 7:
-                    #textlist = 
                     canvas.itemconfig(canvasname,text= list("정답:") + hiddenword, tags = "hangman")
                     canvas.itemconfig(miss,text="계속하려면 Enter를 누르세요", tags = "hangman") 
-                    return
                 else:
                     textlist = "틀린 단어:" + ''.join(nMissedLetters)
                     canvas.itemconfig(miss,text = textlist, tags = "hangman") 
