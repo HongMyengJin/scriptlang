@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import font
 
 g_Tk = Tk()
-g_Tk.geometry("400x400+450+100")
+g_Tk.geometry("500x700+450+100")
 
 text =""
 
@@ -17,7 +17,9 @@ def InitScreen():
     frameEntry = Frame(g_Tk,padx=10, pady=10, bg='#0000ff')
     frameEntry.pack(side="top", fill="x")
     frameList = Frame(g_Tk, padx=10, pady=10, bg='#ffff00')
-    frameList.pack(side="bottom", fill="both", expand=True)
+    frameList.pack(side="top", fill="both", expand=True)
+    frameMap = Frame(g_Tk, padx=10, pady=10, bg='#ffffff')
+    frameMap.pack(side="bottom", fill="both", expand=True)
 
     MainText = Label(frameTitle, font = fontTitle, text="[공중 화장실 찾기 App]")
     MainText.pack(anchor="center", fill="both")
@@ -25,7 +27,7 @@ def InitScreen():
     LBScrollbar = Scrollbar(frameCombo)
     SearchListBox = Listbox(frameCombo, \
         font=fontNormal, activestyle='none', 
-        width=10, height=1, borderwidth=12, relief='ridge', 
+        width=10, height=1, borderwidth=12, relief='flat', 
         yscrollcommand=LBScrollbar.set) 
     slist = ["서울특별시", "경기도", "인천광역시"]
     for i, s in enumerate(slist): 
@@ -40,12 +42,12 @@ def InitScreen():
     
     global InputLabel 
     InputLabel = Entry(frameEntry, font = fontNormal, \
-            width = 26, borderwidth = 12, relief = 'ridge')
-    InputLabel.pack(side="left", padx= 10, expand = True)
+            width = 26, borderwidth = 12, relief = 'flat')
+    InputLabel.pack(side="left", padx= 10, expand = False)
     
     SearchButton = Button(frameEntry, font=fontNormal, \
            text='검색', command = onSearch)
-    SearchButton.pack(side='right', padx=10, expand=True, fill='y')
+    SearchButton.pack(side='left', padx=10, expand=False, fill='y')
     
     global listBox
     LBScrollbar = Scrollbar(frameList)
