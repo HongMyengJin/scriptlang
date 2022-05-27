@@ -38,12 +38,17 @@ def InitScreen():
     LBScrollbar.config(command=SearchListBox.yview) 
     
     sendEmailButton = Button(frameCombo, font = fontNormal, text='이메일', command = MailButton) 
-    sendEmailButton.pack(side='right', padx=10, fill='y')
+    sendEmailButton.pack(side='right', padx=0, fill='y')
     
     global InputLabel 
     InputLabel = Entry(frameEntry, font = fontNormal, \
             width = 26, borderwidth = 12, relief = 'flat')
     InputLabel.pack(side="left", padx= 10, expand = False)
+
+    global InputEmail 
+    InputEmail = Entry(frameCombo, font = fontNormal, \
+            width = 86, borderwidth = 12, relief = 'flat')
+    InputEmail.pack(side="left", padx= 10, pady = 20, expand = False)
     
     SearchButton = Button(frameEntry, font=fontNormal, \
            text='검색', command = onSearch)
@@ -118,7 +123,7 @@ def Search(num):
 def MailButton():
     msg = MIMEText(text) 
     msg['Subject'] = '제목: 공중화장실 데이터'
-    sendMail('mongjinjin@tukorea.ac.kr', 'mongjinjin@naver.com', msg)
+    sendMail('mongjinjin@tukorea.ac.kr', InputEmail.get(), msg)
     
 from email.mime.text import MIMEText
 def sendMail(fromAddr, toAddr, msg):
