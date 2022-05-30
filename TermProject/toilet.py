@@ -15,8 +15,11 @@ Lon_Data = 0.0
 Lat = []
 Lon = []
 
+Name = []
+Name_Data = ""
+
 def InitScreen():
-    fontTitle = font.Font(g_Tk, size=18, weight='bold', family='고딕체')
+    fontTitle = font.Font(g_Tk, size=18, weight='bold', family='경기천년제목 Bold')
     fontNormal = font.Font(g_Tk, size = 15, weight='bold')
     frameTitle = Frame(g_Tk, padx=10, pady=10, bg='#009933')
     frameTitle.pack(side="top", fill="x")
@@ -78,13 +81,14 @@ def event_for_listbox(event):
     global Lon
     global Lat_Data
     global Lon_Data
+    global Name_Data
     selection = event.widget.curselection()
     if selection:
         index = selection[0]
         data = event.widget.get(index)
         Lat_Data = Lat[index]
         Lon_Data = Lon[index]
-
+        Name_Data = Name[index]
         print(data)
 
         
@@ -106,6 +110,8 @@ def Search(num):
     global listBox
     global Lat
     global Lon
+    global Name
+
     listBox.delete(0,listBox.size())
 
     text = ""
@@ -141,6 +147,7 @@ def Search(num):
         listBox.insert(i-1, _text)
         Lat.insert(i - 1, item.find('LAT').text)
         Lon.insert(i - 1, item.find('LNG').text)
+        Name.insert(i - 1, item.find('NAME').text)
         i = i+1
 
 
@@ -170,7 +177,7 @@ def Pressed():
     map_osm = folium.Map(location=[Lat_Data,Lon_Data], zoom_start=13)
     # 마커 지정
     folium.Marker([Lat_Data,Lon_Data],
-    popup='한국공학대학교').add_to(map_osm)
+    popup= Name_Data).add_to(map_osm)
     # html 파일로 저장
     map_osm.save('osm.html')
     webbrowser.open_new('osm.html')
