@@ -18,15 +18,15 @@ Lon = []
 def InitScreen():
     fontTitle = font.Font(g_Tk, size=18, weight='bold', family='고딕체')
     fontNormal = font.Font(g_Tk, size = 15, weight='bold')
-    frameTitle = Frame(g_Tk, padx=10, pady=10, bg='#ff0000')
+    frameTitle = Frame(g_Tk, padx=10, pady=10, bg='#009933')
     frameTitle.pack(side="top", fill="x")
-    frameCombo = Frame(g_Tk,padx = 15, pady=10, bg='#00ff00')
+    frameCombo = Frame(g_Tk,padx = 15, pady=10, bg='#009933')
     frameCombo.pack(side='top', fill='x')
-    frameEntry = Frame(g_Tk,padx=10, pady=10, bg='#0000ff')
+    frameEntry = Frame(g_Tk,padx=10, pady=10, bg='#009933')
     frameEntry.pack(side="top", fill="x")
-    frameList = Frame(g_Tk, padx=10, pady=10, bg='#ffff00')
+    frameList = Frame(g_Tk, padx=10, pady=10, bg='#009933')
     frameList.pack(side="top", fill="both", expand=True)
-    frameMap = Frame(g_Tk, padx=10, pady=10, bg='#ffffff')
+    frameMap = Frame(g_Tk, padx=10, pady=10, bg='#009933')
     frameMap.pack(side="bottom", fill="both", expand=True)
 
     MainText = Label(frameTitle, font = fontTitle, text="[공중 화장실 찾기 App]")
@@ -46,7 +46,7 @@ def InitScreen():
     LBScrollbar.config(command=SearchListBox.yview) 
     
     sendEmailButton = Button(frameCombo, font = fontNormal, text='이메일', command = MailButton) 
-    sendEmailButton.pack(side='right', padx=0, fill='y')
+    sendEmailButton.pack(side='right', padx=0)
     
     global InputLabel 
     InputLabel = Entry(frameEntry, font = fontNormal, \
@@ -177,7 +177,7 @@ def Pressed():
 
 
 InitScreen()
-Button(g_Tk, text='folium 지도', command=Pressed).pack()
+Button(g_Tk, text='지도 보기', command=Pressed).pack()
 g_Tk.mainloop()
 
     
