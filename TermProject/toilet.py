@@ -1,12 +1,19 @@
 from msilib.schema import ListBox
 from tkinter import *
 from tkinter import font
+import folium
+import webbrowser
 
 g_Tk = Tk()
 g_Tk.geometry("500x700+450+100")
 
 text =""
 data =""
+
+Lat_Data = 0.0
+Lon_Data = 0.0
+Lat = []
+Lon = []
 
 def InitScreen():
     fontTitle = font.Font(g_Tk, size=18, weight='bold', family='고딕체')
@@ -67,11 +74,19 @@ def InitScreen():
     
 def event_for_listbox(event):
     global data
+    global Lat
+    global Lon
+    global Lat_Data
+    global Lon_Data
     selection = event.widget.curselection()
     if selection:
         index = selection[0]
         data = event.widget.get(index)
+        Lat_Data = Lat[index]
+        Lon_Data = Lon[index]
+
         print(data)
+
         
 def onSearch(): # "검색" 버튼 이벤트처리
     global SearchListBox
@@ -89,8 +104,10 @@ def Search(num):
     from xml.etree import ElementTree
     
     global listBox
+    global Lat
+    global Lon
     listBox.delete(0,listBox.size())
-    
+
     text = ""
     if num == 0:
         text = "Seoul.xml"
@@ -117,18 +134,24 @@ def Search(num):
         _text = '[' + str(i) + '] ' + \
          getStr(item.find('NAME').text) + \
          ' : ' + getStr(item.find('ADRES').text) + \
-         ' : ' + getStr(item.find('OPEN_TIME').text)
-         
+         ' : ' + getStr(item.find('OPEN_TIME').text) + \
+         ' : ' +  getStr(item.find('LAT').text) + \
+         ' : ' +  getStr(item.find('LNG').text)
+
         listBox.insert(i-1, _text)
+        Lat.insert(i - 1, item.find('LAT').text)
+        Lon.insert(i - 1, item.find('LNG').text)
         i = i+1
-       
+
+
+
 def MailButton():
     global data
     print(data)
     msg = MIMEText(data) 
     msg['Subject'] = '제목: 공중화장실 데이터'
     sendMail('mongjinjin@tukorea.ac.kr', InputEmail.get(), msg)
-    
+
 from email.mime.text import MIMEText
 def sendMail(fromAddr, toAddr, msg):
     import smtplib # 파이썬의 SMTP 모듈
@@ -139,6 +162,22 @@ def sendMail(fromAddr, toAddr, msg):
     s.login('mongjinjin@tukorea.ac.kr', 'jgbnfkhevztwosia') 
     s.sendmail(fromAddr , [toAddr], msg.as_string()) 
     s.close()
-        
+
+def Pressed():
+    global Lat_Data
+    global Lon_Data
+    # Create a Map with Folium and Leaflet.js (위도 경도 지정) 
+    map_osm = folium.Map(location=[Lat_Data,Lon_Data], zoom_start=13)
+    # 마커 지정
+    folium.Marker([Lat_Data,Lon_Data],
+    popup='한국공학대학교').add_to(map_osm)
+    # html 파일로 저장
+    map_osm.save('osm.html')
+    webbrowser.open_new('osm.html')
+
+
 InitScreen()
+Button(g_Tk, text='folium 지도', command=Pressed).pack()
 g_Tk.mainloop()
+
+    
