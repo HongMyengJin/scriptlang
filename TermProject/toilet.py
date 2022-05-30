@@ -95,9 +95,9 @@ def Search(num):
     if num == 0:
         text = "Seoul.xml"
     elif num == 1:
-        text = "Incheon.xml"
-    elif num == 2:
         text = "Gyeonggi.xml"
+    elif num == 2:
+        text = "Incheon.xml"
 
     with open(text, 'rb') as f:
         strXml = f.read().decode('utf-8')
