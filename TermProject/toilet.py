@@ -6,6 +6,7 @@ g_Tk = Tk()
 g_Tk.geometry("500x700+450+100")
 
 text =""
+data =""
 
 def InitScreen():
     fontTitle = font.Font(g_Tk, size=18, weight='bold', family='고딕체')
@@ -65,6 +66,7 @@ def InitScreen():
     LBScrollbar.config(command=listBox.yview)
     
 def event_for_listbox(event):
+    global data
     selection = event.widget.curselection()
     if selection:
         index = selection[0]
@@ -121,7 +123,9 @@ def Search(num):
         i = i+1
        
 def MailButton():
-    msg = MIMEText(text) 
+    global data
+    print(data)
+    msg = MIMEText(data) 
     msg['Subject'] = '제목: 공중화장실 데이터'
     sendMail('mongjinjin@tukorea.ac.kr', InputEmail.get(), msg)
     
@@ -138,4 +142,3 @@ def sendMail(fromAddr, toAddr, msg):
         
 InitScreen()
 g_Tk.mainloop()
-
