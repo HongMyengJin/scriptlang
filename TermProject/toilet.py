@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import font
 import folium
 import webbrowser
-
+from tkinter import messagebox as msg
 g_Tk = Tk()
 g_Tk.geometry("500x700+450+100")
 
@@ -17,9 +17,11 @@ Lon = []
 
 Name = []
 Name_Data = ""
-
+fontMidium= font.Font(g_Tk, size = 15, weight='bold', family='경기천년제목 Medium')
+fontMidium2= font.Font(g_Tk, size = 16, weight='bold', family='경기천년제목 Medium')
 def InitScreen():
-    fontTitle = font.Font(g_Tk, size=18, weight='bold', family='경기천년제목 Bold')
+    fontTitle = font.Font(g_Tk, size=22, weight='bold', family='경기천년제목 Bold')
+    
     fontNormal = font.Font(g_Tk, size = 15, weight='bold')
     frameTitle = Frame(g_Tk, padx=10, pady=10, bg='#009933')
     frameTitle.pack(side="top", fill="x")
@@ -31,13 +33,13 @@ def InitScreen():
     frameList.pack(side="top", fill="both", expand=True)
     frameMap = Frame(g_Tk, padx=10, pady=10, bg='#009933')
     frameMap.pack(side="bottom", fill="both", expand=True)
-
+#경기천년제목 Medium
     MainText = Label(frameTitle, font = fontTitle, text="[공중 화장실 찾기 App]")
     MainText.pack(anchor="center", fill="both")
     global SearchListBox 
     LBScrollbar = Scrollbar(frameCombo)
     SearchListBox = Listbox(frameCombo, \
-        font=fontNormal, activestyle='none', 
+        font=fontMidium2, activestyle='none', 
         width=10, height=1, borderwidth=12, relief='flat', 
         yscrollcommand=LBScrollbar.set) 
     slist = ["서울특별시", "경기도", "인천광역시"]
@@ -48,27 +50,27 @@ def InitScreen():
     LBScrollbar.pack(side="left")
     LBScrollbar.config(command=SearchListBox.yview) 
     
-    sendEmailButton = Button(frameCombo, font = fontNormal, text='이메일', command = MailButton) 
+    sendEmailButton = Button(frameCombo, font = fontMidium, text='이메일', command = MailButton) 
     sendEmailButton.pack(side='right', padx=0)
     
     global InputLabel 
-    InputLabel = Entry(frameEntry, font = fontNormal, \
+    InputLabel = Entry(frameEntry, font = fontMidium, \
             width = 26, borderwidth = 12, relief = 'flat')
     InputLabel.pack(side="left", padx= 10, expand = False)
 
     global InputEmail 
-    InputEmail = Entry(frameCombo, font = fontNormal, \
+    InputEmail = Entry(frameCombo, font = fontMidium, \
             width = 86, borderwidth = 12, relief = 'flat')
     InputEmail.pack(side="left", padx= 10, pady = 20, expand = False)
     
-    SearchButton = Button(frameEntry, font=fontNormal, \
+    SearchButton = Button(frameEntry, font=fontMidium, \
            text='검색', command = onSearch)
     SearchButton.pack(side='left', padx=10, expand=False, fill='y')
     
     global listBox
     LBScrollbar = Scrollbar(frameList)
     listBox = Listbox(frameList, selectmode='extended',\
-    font=fontNormal, width=10, height=15, \
+    font=fontMidium, width=10, height=15, \
     borderwidth=12, relief='ridge', yscrollcommand=LBScrollbar.set)
     listBox.bind('<<ListboxSelect>>', event_for_listbox)
     listBox.pack(side='left', anchor='n', expand=True, fill="x")
@@ -174,6 +176,13 @@ def Pressed():
     global Lat_Data
     global Lon_Data
     # Create a Map with Folium and Leaflet.js (위도 경도 지정) 
+    if Lat_Data  == None or Lon_Data == None: # 둘 중 하나가 None이면
+        msg.showinfo("Information", "해당 위도 경도가 존재하지 않습니다.")
+        return
+
+
+
+    
     map_osm = folium.Map(location=[Lat_Data,Lon_Data], zoom_start=13)
     # 마커 지정
     folium.Marker([Lat_Data,Lon_Data],
@@ -184,7 +193,8 @@ def Pressed():
 
 
 InitScreen()
-Button(g_Tk, text='지도 보기', command=Pressed).pack()
+g_Tk.title("toilet information")
+Button(g_Tk, font=fontMidium, text='지도 보기', command=Pressed).pack()
 g_Tk.mainloop()
 
     
