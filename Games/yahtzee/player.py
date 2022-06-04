@@ -37,3 +37,10 @@ class Player:
                 return False
             i = i + 1
         return True
+
+    def getTotalScore(self):
+        sum = 0
+        print(self.scores)
+        for i in range(self.UPPER+self.LOWER):
+            sum += self.scores[i]
+        return sum
