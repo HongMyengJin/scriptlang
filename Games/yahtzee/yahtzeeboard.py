@@ -175,6 +175,11 @@ class YahtzeeBoard:
         # TODO: 구현
         for i in range(self.TOTAL + 1):
             for j in range(self.numPlayers):
+                if not self.fields[i][j]['text']:
+                    self.fields[i][j]['state'] = 'normal'
+                    self.fields[i][j]['bg'] = self.color_btn_bg
+                self.fields[i][j].grid(row=i+1, column=2 + j)
+ 
                 if (j != self.player or (i) == self.UPPERTOTAL or (i) == self.UPPERBONUS or (i) == self.LOWERTOTAL or (i) == self.TOTAL):
                         self.fields[i][j]['state'] = 'disabled'
                         self.fields[i][j]['bg'] = 'light gray'
