@@ -103,6 +103,10 @@ class YahtzeeBoard:
     def rollDiceListener(self):
         # 'state' 값이 'disabled'가 아닌 모든 주사위 값을 새로 할당하고 화면에 표시.
         # TODO: 구현
+        for i in range(5):
+            if(self.diceButtons[i]['state'] != 'disabled'):
+                self.dice[i].rollDie()
+                self.diceButtons[i].configure(text=str(self.dice[i].getRoll()))
 
         # self.roll 이 0, 1 일 때 : 
         if (self.roll == 0 or self.roll ==1):
