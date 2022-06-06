@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import font
+import tkinter
 from player import *
 from dice import *
 from configuration import *
@@ -34,6 +35,7 @@ class YahtzeeBoard:
 
     def InitGame(self):     #player window 생성하고 최대 10명까지 플레이어 설정
         self.pwindow = Tk()
+        self.window_Close = ()
         self.TempFont = font.Font(size=12, weight='bold', family='Consolas')
         self.label = []
         self.entry = []
@@ -59,7 +61,6 @@ class YahtzeeBoard:
         self.numPlayers = int(self.entry[0].get())
         for i in range(1, self.numPlayers+1):
             self.players.append(Player(str(self.entry[i].get())))
-        self.pwindow.destroy()
 
         ##################################################       
         # Yahtzee 보드판: 플레이어 수 만큼 생성
@@ -130,7 +131,34 @@ class YahtzeeBoard:
 
     # 카레고리 버튼 눌렀을 때의 처리.
     #   row: 0~5, 8~14
+    def Restart(self):
+        global dice
+        global diceButtons
+        global fields
+        global players
+        global numPlayers
+        global player
+        global round
+        global roll
+        dice = []       # Dice() 객체의 리스트.
+        diceButtons = [] # 각 주사위를 표현하는 Button 객체의 리스트.
+        fields = []     # 각 플레이어별 점수판(카테고리). Button 객체의 2차원 리스트.
+                        # 열: 플레이어 (0열=플레이어1, 1열=플레이어2,…)
+                        # 17행: upper카테고리6행, upperScore, upperBonus, lower카테고리7행, LowerScore, Total
+        players = []    # 플레이어 수 만큼의 Player 인스턴스를 가짐.
+        numPlayers = 0  # # 플레이어 수
+        player = 0      # players 리스트에서 현재 플레이어의 index.
+        round = 0       # 13 라운드 중 몇번째인지 (0~12 사이의 값을 가짐)
+        roll = 0        # 각 라운드에서 3번 중 몇번째 굴리기인지 (0~2 사이의 값을 가짐)
+        self.players = []
+        self.dice = []
+        self.fields = []
+        self.entry = []
+        self.player = []
+        self.fields = []
+        self.pwindow.destroy()
     def categoryListener(self, row):
+        self.roll = 0
         if self.checkDice != 1:
             return
         score = Configuration.score(row, self.dice)      #점수 계산
@@ -166,7 +194,7 @@ class YahtzeeBoard:
         #   UI의 LOWERTOTAL 에 내용 채우기.
         # TODO: 구현
         if (cur_player.allLowerUse()):
-            self.fields[self.LOWERTOTAL][self.player].configure(text=str(cur_player.getLowerScore()))
+            self.fields[self.LOWERTOTAL][self.player].configure(text=str(cur_player.getLower()))
         # UPPER category와 LOWER category가 전부 사용되었으면 
         # -> UI의 TOTAL 에 내용 채우기.
         # TODO: 구현
@@ -209,10 +237,15 @@ class YahtzeeBoard:
             for player in self.players:
                 if player.getTotal() is greatest:
                     win_players.append(player.toName())
-            window = Tk()
-            window.geometry("200x100+500+200")
-            Label(window, text="승자는 "+str(win_players)+"입니다.").place(x=100,y=50,anchor='center')
-            window.mainloop()
+            self.window_Close = Tk()
+            self.window_Close.geometry("200x100+500+200")
+            Label(self.window_Close, text="승자는 "+str(win_players)+"입니다.").place(x=100,y=50,anchor='center')
+            exit_button = tkinter.Button(self.window_Close, text = "ReStart", command = self.Restart)
+            exit_button.pack()
+            self.window_Close.mainloop()
+            # window.destroy()
+            # self.InitGame()
+            #window.mainloop()
             return
 
         # 다시 Roll Dice 버튼과 diceButtons 버튼들을 활성화.
@@ -230,3 +263,4 @@ class YahtzeeBoard:
 
 if __name__ == '__main__':
     YahtzeeBoard()
+
