@@ -62,9 +62,9 @@ class Configuration:
     def scoreFullHouse(d):
         for i in range(len(d)+1):
             for j in range(len(d)):
-                if d.count(i+1) is 2 and d.count(j+1) is 3:
+                if d.count(i+1) == 2 and d.count(j+1) == 3:
                     return 25
-                if d.count(i+1) is 3 and d.count(j+1) is 2:
+                if d.count(i+1) == 3 and d.count(j+1) == 2:
                     return 25
         return False
 
@@ -84,7 +84,7 @@ class Configuration:
 
     def scoreYahtzee(d):
         for i in range(len(d)+1):
-            if d.count(i+1) is 5:
+            if d.count(i+1) == 5:
                 print( d.count(i+1))
                 return 50
         return False
