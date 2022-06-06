@@ -157,6 +157,7 @@ class YahtzeeBoard:
         self.player = []
         self.fields = []
         self.pwindow.destroy()
+        self.InitGame()
     def categoryListener(self, row):
         self.roll = 0
         if self.checkDice != 1:
