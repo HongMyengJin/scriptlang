@@ -79,7 +79,7 @@ class YahtzeeBoard:
             Label(self.window, text=Configuration.configs[i], font=self.TempFont).grid(row=i, column=1)
             for j in range(self.numPlayers):  # j열 : 플레이어
                 if (i == 0):  # 플레이어 이름 표시
-                    Label(self.window, text=self.players[j].toString(), font=self.TempFont).grid(row=i, column=2 + j)
+                    Label(self.window, text=self.players[j].toName(), font=self.TempFont).grid(row=i, column=2 + j)
                 else:
                     if (j==0): #각 행마다 한번씩 리스트 추가, 다중 플레이어 지원
                         self.fields.append(list())
@@ -94,7 +94,7 @@ class YahtzeeBoard:
                         self.fields[i-1][j]['bg'] = 'light gray'
         
         #상태 메시지 출력
-        self.bottomLabel=Label(self.window, text=self.players[self.player].toString()+
+        self.bottomLabel=Label(self.window, text=self.players[self.player].toName()+
             "차례: Roll Dice 버튼을 누르세요", width=35, font=self.TempFont)
         self.bottomLabel.grid(row=self.TOTAL + 2, column=0, columnspan=2)
         self.window.mainloop()
@@ -133,39 +133,39 @@ class YahtzeeBoard:
         if (row>7):
             index = row-2
         cur_player = self.players[self.player]
-        # (1) cur_player에 setScore(), setAtUsed() 호출하여 점수와 사용상태 반영.
+        # (1) cur_player에 setScore(), setAtUse() 호출하여 점수와 사용상태 반영.
         # (2) 선택한 카테고리의 점수를 버튼에 적고 
         # (3) 버튼을 disable 시킴.
         # TODO: 구현
 
         cur_player.setScore(score, index)
-        cur_player.setAtUsed(index)
+        cur_player.setAtUse(index)
         self.fields[row][self.player].configure(text=str(score))
         self.fields[row][self.player]['state'] = 'disabled'
         self.fields[row][self.player]['bg'] = 'light gray'
         
         # UPPER category가 전부 사용되었으면(cur_player.allUpperUsed()로써 확인)
-        # -> cur_player.getUpperScore() 점수에 따라
+        # -> cur_player.getUpper() 점수에 따라
         #    UI의 UPPERTOTAL, UPPERBONUS 에 내용 채우기.
         # TODO: 구현
-        if (cur_player.allUpperUsed()):
-            self.fields[self.UPPERTOTAL][self.player].configure(text=str(cur_player.getUpperScore()))
-        if (cur_player.getUpperScore() > 63):
+        if (cur_player.allUpperUse()):
+            self.fields[self.UPPERTOTAL][self.player].configure(text=str(cur_player.getUpper()))
+        if (cur_player.getUpper() > 63):
             self.fields[self.UPPERBONUS][self.player].configure(text="35")  # UPPERBONUS=7
         else:
             self.fields[self.UPPERBONUS][self.player].configure(text="0")  # UPPERBONUS=7
 
-        # LOWER category 전부 사용되었으면(cur_player.allLowerUsed()로써 확인) 
-        # -> cur_player.getLowerScore() 점수에 따라
+        # LOWER category 전부 사용되었으면(cur_player.allLowerUse()로써 확인) 
+        # -> cur_player.getLower() 점수에 따라
         #   UI의 LOWERTOTAL 에 내용 채우기.
         # TODO: 구현
-        if (cur_player.allLowerUsed()):
+        if (cur_player.allLowerUse()):
             self.fields[self.LOWERTOTAL][self.player].configure(text=str(cur_player.getLowerScore()))
         # UPPER category와 LOWER category가 전부 사용되었으면 
         # -> UI의 TOTAL 에 내용 채우기.
         # TODO: 구현
-        if (cur_player.allUpperUsed() and cur_player.allLowerUsed()):
-            self.fields[self.TOTAL][self.player].configure(text=str(cur_player.getTotalScore()))
+        if (cur_player.allUpperUse() and cur_player.allLowerUse()):
+            self.fields[self.TOTAL][self.player].configure(text=str(cur_player.getTotal()))
        
         # 다음 플레이어로 가기.
         self.player = (self.player + 1) % self.numPlayers
@@ -198,13 +198,13 @@ class YahtzeeBoard:
                 scores.append(int(score['text']))
             greatest = max(scores)
             print(greatest)
-            winplayers = []
+            win_players = []
             for player in self.players:
-                if player.getTotalScore() is greatest:
-                    winplayers.append(player.toString())
+                if player.getTotal() is greatest:
+                    win_players.append(player.toName())
             window = Tk()
             window.geometry("200x100+500+200")
-            Label(window, text="승자는 "+str(winplayers)+"입니다.").place(x=100,y=50,anchor='center')
+            Label(window, text="승자는 "+str(win_players)+"입니다.").place(x=100,y=50,anchor='center')
             window.mainloop()
             return
 
@@ -218,7 +218,7 @@ class YahtzeeBoard:
             self.diceButtons[i]['bg'] = self.color_btn_bg
 
         # bottomLabel 초기화.
-        self.bottomLabel.configure(text=cur_player.toString()+
+        self.bottomLabel.configure(text=cur_player.toName()+
             "차례: Roll Dice 버튼을 누르세요")
 
 if __name__ == '__main__':

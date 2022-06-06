@@ -24,42 +24,42 @@ class Configuration:
         for n in dices:
             dicelist.append(n.getRoll())
         if (row >= 0 and row <= 6):
-            return Configuration.scoreUpper(dicelist, row + 1)
+            return Configuration.Upper(dicelist, row + 1)
         elif (row == 8):
-            return Configuration.scoreThreeOfAKind(dicelist)
+            return Configuration.ThreeOfAKind(dicelist)
         elif (row == 9):
-            return Configuration.scoreFourOfAKind(dicelist)
+            return Configuration.FourOfAKind(dicelist)
         elif (row == 10):
-            return Configuration.scoreFullHouse(dicelist)
+            return Configuration.FullHouse(dicelist)
         elif (row == 11):
-            return Configuration.scoreSmallStraight(dicelist)
+            return Configuration.SmallStraight(dicelist)
         elif (row == 12):
-            return Configuration.scoreLargeStraight(dicelist)
+            return Configuration.LargeStraight(dicelist)
         elif (row == 13):
-            return Configuration.scoreYahtzee(dicelist)
+            return Configuration.Yahtzee(dicelist)
         elif (row == 14):
             return Configuration.sumDie(dicelist)
 
-    def scoreUpper(d, num):  # 정적 메소드: 객체생성 없이 사용 가능
+    def Upper(d, num):  # 정적 메소드: 객체생성 없이 사용 가능
 
         # Upper Section 구성 (Ones, Twos, Threes, ...)에 대해 주사위 점수를 매 깁니다. 예를 들어,
         # num이 1이면 "Ones"구성의 주사위 점수를 반환합니다.
 
         return d.count(num)*num
 
-    def scoreThreeOfAKind(d):
+    def ThreeOfAKind(d):
         for i in range(len(d)+1):
             if d.count(i+1) >= 3:
                 return sum(d)
         return False
 
-    def scoreFourOfAKind(d):
+    def FourOfAKind(d):
         for i in range(len(d)+1):
             if d.count(i+1) >= 4:
                 return sum(d)
         return False
 
-    def scoreFullHouse(d):
+    def FullHouse(d):
         for i in range(len(d)+1):
             for j in range(len(d)):
                 if d.count(i+1) == 2 and d.count(j+1) == 3:
@@ -68,21 +68,17 @@ class Configuration:
                     return 25
         return False
 
-    def scoreSmallStraight(d):
-        # 1 2 3 4 혹은 2 3 4 5 혹은 3 4 5 6 검사
-        # 1 2 2 3 4, 1 2 3 4 6, 1 3 4 5 6, 2 3 4 4 5
+    def SmallStraight(d):
         if (1 in d and 2 in d and 3 in d and 4 in d) or (2 in d and 3 in d and 4 in d and 5 in d) or (3 in d and 4 in d and 5 in d and 6 in d):
             return 30
         return False
 
-    def scoreLargeStraight(d):
-
-        # 1 2 3 4 5 혹은 2 3 4 5 6 검사
+    def LargeStraight(d):
         if (1 in d and 2 in d and 3 in d and 4 in d and 5 in d) or (2 in d and 3 in d and 4 in d and 5 in d and 6 in d) :
             return 40
         return False
 
-    def scoreYahtzee(d):
+    def Yahtzee(d):
         for i in range(len(d)+1):
             if d.count(i+1) == 5:
                 print( d.count(i+1))
