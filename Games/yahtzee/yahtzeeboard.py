@@ -12,6 +12,9 @@ class YahtzeeBoard:
     LOWERTOTAL = 15  # "Lower Scores" 위치의 index.
     TOTAL = 16  # "Total" 위치의 index.
 
+    #주사위굴렸는지 확인
+    checkDice = 0
+
     # 객체 리스트
     dice = []       # Dice() 객체의 리스트.
     diceButtons = [] # 각 주사위를 표현하는 Button 객체의 리스트.
@@ -105,6 +108,7 @@ class YahtzeeBoard:
         # TODO: 구현
         for i in range(5):
             if(self.diceButtons[i]['state'] != 'disabled'):
+                self.checkDice = 1
                 self.dice[i].rollDie()
                 self.diceButtons[i].configure(text=str(self.dice[i].getRoll()))
 
@@ -127,6 +131,8 @@ class YahtzeeBoard:
     # 카레고리 버튼 눌렀을 때의 처리.
     #   row: 0~5, 8~14
     def categoryListener(self, row):
+        if self.checkDice != 1:
+            return
         score = Configuration.score(row, self.dice)      #점수 계산
         # index : 0~12
         index = row
@@ -169,6 +175,7 @@ class YahtzeeBoard:
        
         # 다음 플레이어로 가기.
         self.player = (self.player + 1) % self.numPlayers
+        self.checkDice = 0
 
         # 선택할 수 없는 카테고리들과 현재 player 것이 아닌 버튼들은 disable 시키기.
         # 그 외는 enable 시키기.
