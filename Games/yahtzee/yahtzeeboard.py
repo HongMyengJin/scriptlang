@@ -140,8 +140,7 @@ class YahtzeeBoard:
         global player
         global round
         global roll
-        dice = []       # Dice() 객체의 리스트.
-        diceButtons = [] # 각 주사위를 표현하는 Button 객체의 리스트.
+        #diceButtons = [] # 각 주사위를 표현하는 Button 객체의 리스트.
         fields = []     # 각 플레이어별 점수판(카테고리). Button 객체의 2차원 리스트.
                         # 열: 플레이어 (0열=플레이어1, 1열=플레이어2,…)
                         # 17행: upper카테고리6행, upperScore, upperBonus, lower카테고리7행, LowerScore, Total
@@ -154,9 +153,13 @@ class YahtzeeBoard:
         self.dice = []
         self.fields = []
         self.entry = []
-        self.player = []
+        self.round = 0
+        self.diceButtons = []
         self.fields = []
+        #self.rollDice = []
         self.pwindow.destroy()
+        self.window.destroy()
+        self.window_Close.destroy()
         self.InitGame()
     def categoryListener(self, row):
         self.roll = 0
