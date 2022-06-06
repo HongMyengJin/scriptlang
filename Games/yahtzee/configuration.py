@@ -51,13 +51,13 @@ class Configuration:
         for i in range(len(d)+1):
             if d.count(i+1) >= 3:
                 return sum(d)
-        return False
+        return 0
 
     def FourOfAKind(d):
         for i in range(len(d)+1):
             if d.count(i+1) >= 4:
                 return sum(d)
-        return False
+        return 0
 
     def FullHouse(d):
         for i in range(len(d)+1):
@@ -66,24 +66,24 @@ class Configuration:
                     return 25
                 if d.count(i+1) == 3 and d.count(j+1) == 2:
                     return 25
-        return False
+        return 0
 
     def SmallStraight(d):
         if (1 in d and 2 in d and 3 in d and 4 in d) or (2 in d and 3 in d and 4 in d and 5 in d) or (3 in d and 4 in d and 5 in d and 6 in d):
             return 30
-        return False
+        return 0
 
     def LargeStraight(d):
         if (1 in d and 2 in d and 3 in d and 4 in d and 5 in d) or (2 in d and 3 in d and 4 in d and 5 in d and 6 in d) :
             return 40
-        return False
+        return 0
 
     def Yahtzee(d):
         for i in range(len(d)+1):
             if d.count(i+1) == 5:
                 print( d.count(i+1))
                 return 50
-        return False
+        return 0
 
     def sumDie(d):
         return sum(d)

@@ -126,6 +126,8 @@ class YahtzeeBoard:
 
     # 각 주사위에 해당되는 버튼 클릭 : disable 시키고 배경색을 어둡게 바꿔 표현해 주기.
     def diceListener(self, row):
+        if self.checkDice != 1:
+            return
         self.diceButtons[row]['state'] = 'disabled'
         self.diceButtons[row]['bg'] = 'light gray'
 
@@ -207,6 +209,7 @@ class YahtzeeBoard:
        
         # 다음 플레이어로 가기.
         self.player = (self.player + 1) % self.numPlayers
+        cur_player = self.players[self.player]
         self.checkDice = 0
 
         # 선택할 수 없는 카테고리들과 현재 player 것이 아닌 버튼들은 disable 시키기.
@@ -237,13 +240,13 @@ class YahtzeeBoard:
                 scores.append(int(score['text']))
             greatest = max(scores)
             print(greatest)
-            win_players = []
+            win_players = ""
             for player in self.players:
                 if player.getTotal() is greatest:
-                    win_players.append(player.toName())
+                    win_players = player.toName()
             self.window_Close = Tk()
             self.window_Close.geometry("200x100+500+200")
-            Label(self.window_Close, text="승자는 "+str(win_players)+"입니다.").place(x=100,y=50,anchor='center')
+            Label(self.window_Close, text=win_players+"이김!").place(x=100,y=50,anchor='center')
             exit_button = tkinter.Button(self.window_Close, text = "ReStart", command = self.Restart)
             exit_button.pack()
             self.window_Close.mainloop()
