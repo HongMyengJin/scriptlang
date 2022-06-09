@@ -126,16 +126,12 @@ class YahtzeeBoard:
 
     # 각 주사위에 해당되는 버튼 클릭 : disable 시키고 배경색을 어둡게 바꿔 표현해 주기.
     def diceListener(self, row):
-<<<<<<< Updated upstream
         if self.checkDice != 1:
             return
-        self.diceButtons[row]['state'] = 'disabled'
-        self.diceButtons[row]['bg'] = 'light gray'
-=======
         if not(self.diceButtons[row]['bg'] == 'light gray' and self.diceButtons[row]['state'] == 'disabled'):
             self.diceButtons[row]['state'] = 'disabled'
             self.diceButtons[row]['bg'] = 'light gray'
->>>>>>> Stashed changes
+
 
     # 카레고리 버튼 눌렀을 때의 처리.
     #   row: 0~5, 8~14
