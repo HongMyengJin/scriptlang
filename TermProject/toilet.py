@@ -1,6 +1,7 @@
 from msilib.schema import ListBox
 from tkinter import *
 from tkinter import font
+import tkinter.ttk as ttk
 import folium
 import webbrowser
 from tkinter import messagebox as msg
@@ -67,14 +68,31 @@ def InitScreen():
     frameMap = Frame(g_Tk, padx=10, pady=10, bg='#009933')
     frameMap.pack(side="bottom", fill="both", expand=True)
 #경기천년제목 Medium
+
     # MainText = Label(frameTitle, font = fontTitle, text="[공중 화장실 찾기 App]")
     # MainText.pack(anchor="center", fill="both")
+
     global SearchListBox 
-    LBScrollbar = Scrollbar(frameCombo)
-    SearchListBox = Listbox(frameCombo, \
-        font=fontMidium2, activestyle='none', 
-        width=10, height=1, borderwidth=12, relief='flat', 
-        yscrollcommand=LBScrollbar.set) 
+    slist = ["가평군", "고양시", "과천시","광명시", "광주시", "구리시", 
+             "군포시", "김포시", "남양주시", "동두천시", "부천시", "수원시", 
+             "성남시", "시흥시", "안산시", "안성시", "안양시", "양주시", 
+             "양평군", "여주시", "연천군", "오산시", "용인시", "의왕시", 
+             "의정부시", "이천시", "파주시", "포천군", "평택시", "하남시",
+             "화성시"] 
+    SearchListBox = ttk.Combobox(frameCombo, values = slist)
+    SearchListBox.set('시/군 선택')    
+    SearchListBox.pack(side='left', ipadx= 5, expand=False )
+     
+            
+               
+                 
+    #for i, s in enumerate(slist): 
+     #   SearchListBox.insert(i, s)
+                            
+   
+   
+    
+    
     
     SearchButton = Button(frameEntry, font=fontMidium, \
            text='검색', command = onSearch)
@@ -148,13 +166,13 @@ def event_for_listbox(event):
 
         
 def onSearch(): # "검색" 버튼 이벤트처리
-    global SearchListBox
-    listBox.yview
-    imageLabel.setImage('Email_Close.gif')
-    sels = SearchListBox.curselection()
-    iSearchIndex = \
-        0 if len(sels) == 0 else SearchListBox.curselection()[0]
-    Search(iSearchIndex)
+
+    #global SearchListBox
+    #listBox.yview
+    #sels = SearchListBox.curselection()
+    #iSearchIndex = \
+    #    0 if len(sels) == 0 else SearchListBox.curselection()[0]
+     Search(0)
 
 
 def getStr(s): 
