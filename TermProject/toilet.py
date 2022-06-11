@@ -8,13 +8,14 @@ from tkinter import messagebox as msg
 g_Tk = Tk()
 g_Tk.geometry("900x700+450+100")
 
-
-
 Lat = []
 Lon = []
 
+IsPublic = []
+
 Name = []
 Address = []
+Manage = []
 Number = []
 OpenTime = []
 
@@ -80,6 +81,11 @@ def InitScreen():
     # MainText = Label(frameTitle, font = fontTitle, text="[공중 화장실 찾기 App]")
     # MainText.pack(anchor="center", fill="both")
 
+    global chkValue
+    chkValue = IntVar()
+    ttk.Checkbutton(frameCombo, text="공용화장실여부", variable=chkValue).pack(side='left')
+    print(chkValue.get())
+
     global SearchListBox 
     slist = ["가평군", "고양시", "과천시","광명시", "광주시", "구리시", 
              "군포시", "김포시", "남양주시", "동두천시", "부천시", "수원시", 
@@ -89,20 +95,13 @@ def InitScreen():
              "화성시"] 
     SearchListBox = ttk.Combobox(frameCombo, values = slist)
     SearchListBox.set('시/군 선택')    
-    SearchListBox.pack(side='left', ipadx= 5, expand=False )
+    SearchListBox.pack(side='left', padx= 5, expand=False )
      
-    global CheckBox
-    chkValue = IntVar()
-    ttk.Checkbutton(frameCheck, text="공용화장실여부", variable=chkValue).pack(side='left')
-    print(chkValue.get())
-               
-                 
+    SearchListBox.bind("<<ComboboxSelected>>", ComboChange)
+            
+              
     #for i, s in enumerate(slist): 
      #   SearchListBox.insert(i, s)
-                            
-   
-   
-    
     
     
     SearchButton = Button(frameEntry, font=fontMidium, \
@@ -132,7 +131,7 @@ def InitScreen():
     global listBox
     LBScrollbar = Scrollbar(frameList)
     listBox = Listbox(frameList, selectmode='extended',\
-    font=fontMidium, width=10, height=15, \
+    font=fontMidium, width=3, height=15, \
     borderwidth=12, relief='ridge', yscrollcommand=LBScrollbar.set)
     listBox.bind('<<ListboxSelect>>', event_for_listbox)
     listBox.pack(side='left', anchor='n', expand=True, fill="x")
@@ -141,19 +140,60 @@ def InitScreen():
     
     global listBox2
     listBox2 = Listbox(frameList, selectmode='extended',\
-    font=fontMidium, width=10, height=15, \
-    borderwidth=12, relief='ridge', yscrollcommand=LBScrollbar.set)
-    listBox2.bind('<<ListboxSelect>>', event_for_listbox)
+    font=fontMidium, width=5, height=7, \
+    borderwidth=12, background = 'skyblue', relief='flat', yscrollcommand=LBScrollbar.set)
     listBox2.pack(side='left', anchor='n', expand=True, fill="x")
 
-
-    frameMap2 = Frame(g_Tk, bg='#009933')
-    frameMap2.pack(side="bottom")
+    frameMap2 = Frame(frameEntry, bg='#009933')
+    frameMap2.pack(side="left")
     
     imageLabel2 = ImageLabel(frameMap2, width=150, height=100)
     imageLabel2.setImage('map.gif')
     imageLabel2.bind('<Button-1>', Pressed)
-    imageLabel2.pack(side = "bottom", fill = X)
+    imageLabel2.pack(side = "left", fill = X)
+    
+    global w
+    w = Canvas(frameEntry,width = 5, height=100, bg='green')
+    w.pack(side='left', anchor='n', expand=True, fill="x")
+    drawGraph(w, [100, 200, 670, 900, 150], 250, 100) 
+
+def drawGraph(canvas, data, canvasWidth, canvasHeight): 
+    canvas.delete("grim") # 기존 그림 지우기
+    if not len(data): # 데이터 없으면 return
+        canvas.create_text(canvasWidth/2,(canvasHeight/2), 
+        text="No Data", tags="grim") 
+        return
+    nData = len(data) # 데이터 개수, 최대값, 최소값 얻어 놓기
+    nMax = max(data) 
+    nMin = min(data)
+    # background 그리기
+    canvas.create_rectangle(0, 0, canvasWidth, canvasHeight, fill='white', tag="grim")
+
+    if nMax == 0: # devide by zero 방지
+        nMax=1
+    rectWidth = (canvasWidth // nData) 
+    # 데이터 1개의 폭. 
+    bottom = canvasHeight - 2 # bar의 bottom 위치 
+    maxheight = canvasHeight - 4 # bar의 최대 높이.(위/아래 각각 20씩 여유.)
+    for i in range(nData): # 각 데이터에 대해.. 
+        # max/min은 특별한 색으로.
+        if nMax == data[i]: 
+            color="red" 
+        elif nMin == data[i]: 
+            color='blue' 
+        else: 
+            color="grey" 
+        curHeight = maxheight * data[i] / nMax # 최대값에 대한 비율 반영
+        top = bottom - curHeight # bar의 top 위치
+        left = i * rectWidth # bar의 left 위치
+        right = (i + 1) * rectWidth # bar의 right 위치
+        canvas.create_rectangle(left, top, right, bottom, fill=color, tag="grim", activefill='yellow')
+        # 위에 값, 아래에 번호. 
+        canvas.create_text((left+right)//2, top-10, text=data[i], tags="grim") 
+        canvas.create_text((left+right)//2, bottom+10, text=i+1, tags="grim")
+    
+    
+    
     
 def event_for_listbox(event):
     global data
@@ -172,15 +212,16 @@ def event_for_listbox(event):
         data = event.widget.get(index)
         Lat_Data = Lat[index]
         Lon_Data = Lon[index]
-        listBox2.delete(0, 3)
-        listBox2.insert(0, "화장실명:" + Name[index])
-        listBox2.insert(1, "소재지도로명주소:" + Address[index])
+        listBox2.delete(0, 4)
+        listBox2.insert(0, "화장실명 : " + Name[index])
+        listBox2.insert(1, "소재지도로명주소 : " + Address[index])
+        listBox2.insert(2, "관리기관명 : " + Manage[index])
         if Number[index] != None:
-            listBox2.insert(2, "전화번호:" + Number[index])
+            listBox2.insert(3, "전화번호 : " + Number[index])
         else:
-            listBox2.insert(2, Number[index])
+            listBox2.insert(3, Number[index])
 
-        listBox2.insert(3, "개방시간:" +OpenTime[index])
+        listBox2.insert(4, "개방시간 : " +OpenTime[index])
 
 
         print(data)
@@ -197,8 +238,86 @@ def onSearch(): # "검색" 버튼 이벤트처리
      Search(0)
 
 
+
+
 def getStr(s): 
     return '' if not s else s
+
+def ComboChange(self):
+    # 시도 자르기
+
+    #만약 아래 콤보값과 같으면 리스트 박스에 넣기
+    SearchCity(SearchListBox.get())
+
+def SearchCity(city):
+    from urllib.request import urlopen # 원격에서 가져오기
+    from xml.etree import ElementTree
+    
+    global listBox
+    global Lat
+    global Lon
+    global Name
+
+    listBox.delete(0,listBox.size())
+
+    key = '50e822b566c5445e99f7d7582aea21ec' 
+    Index = 11
+    Type = 'xml'
+    pSize = '1000'
+    i = 1
+    for n in range(11):
+        Index = str(n)
+        url = 'https://openapi.gg.go.kr/Publtolt?key='\
+        + key+'&pIndex=' + Index + '&Type=' + Type + '&pSize=' + pSize
+        response = urlopen(url).read()
+
+        strxml = response.decode('utf-8') # xml 해석하기
+        parseData = ElementTree.fromstring(strxml)
+    
+        elements = parseData.iter('row')
+
+        for item in elements:
+            part_el = item.find('REFINE_LOTNO_ADDR')
+            if item.find('REFINE_ROADNM_ADDR').text == None:
+                continue
+            strings = item.find('REFINE_ROADNM_ADDR').text.split(' ', 2)
+            checkbox = item.find('MALE_FEMALE_TOILET_YN').text
+            #print(checkbox)
+            if strings[1] != city or part_el.text == None:
+                continue
+            if chkValue.get() == 1 and checkbox == 'Y':
+            #if InputLabel.get() in part_el.text :
+                    _text = '[' + str(i) + '] ' + \
+                    getStr(item.find('PBCTLT_PLC_NM').text)
+
+                    listBox.insert(i-1, _text)
+                
+                    Lat.insert(i - 1, item.find('REFINE_WGS84_LAT').text)
+                    Lon.insert(i - 1, item.find('REFINE_WGS84_LOGT').text)
+
+                    Name.insert(i - 1, item.find('PBCTLT_PLC_NM').text)
+                    Address.insert(i - 1, item.find('REFINE_ROADNM_ADDR').text)
+                    Manage.insert(i-1, item.find('MANAGE_INST_NM').text)
+                    Number.insert(i - 1, item.find('MANAGE_INST_TELNO').text)
+                    OpenTime.insert(i - 1, item.find('OPEN_TM_INFO').text)
+
+                    i = i+1
+            if chkValue.get() == 0:
+                    _text = '[' + str(i) + '] ' + \
+                    getStr(item.find('PBCTLT_PLC_NM').text)
+
+                    listBox.insert(i-1, _text)
+                
+                    Lat.insert(i - 1, item.find('REFINE_WGS84_LAT').text)
+                    Lon.insert(i - 1, item.find('REFINE_WGS84_LOGT').text)
+
+                    Name.insert(i - 1, item.find('PBCTLT_PLC_NM').text)
+                    Address.insert(i - 1, item.find('REFINE_ROADNM_ADDR').text)
+                    Manage.insert(i-1, item.find('MANAGE_INST_NM').text)
+                    Number.insert(i - 1, item.find('MANAGE_INST_TELNO').text)
+                    OpenTime.insert(i - 1, item.find('OPEN_TM_INFO').text)
+                    i = i+1
+                
 
 def Search(num):
     from urllib.request import urlopen # 원격에서 가져오기
@@ -215,8 +334,6 @@ def Search(num):
     Index = 11
     Type = 'xml'
     pSize = '1000'
-    check = 0
-    out = 0
     i = 1
     for n in range(11):
         Index = str(n)
