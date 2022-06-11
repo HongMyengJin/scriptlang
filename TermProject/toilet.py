@@ -65,6 +65,7 @@ def InitScreen():
     frameTitle.pack(fill='x')
     frameCombo = Frame(g_Tk, pady=10, bg='#009933')
     frameCombo.pack(side='top', fill='x')
+
     frameMail = Frame(g_Tk,padx = 15, pady=10, bg='#009933')
     frameMail.pack(side='top', fill='x')
     frameEntry = Frame(g_Tk,padx=8.8, pady=10, bg='#009933')
@@ -88,7 +89,7 @@ def InitScreen():
     SearchListBox = ttk.Combobox(frameCombo, values = slist)
     SearchListBox.set('시/군 선택')    
     SearchListBox.pack(side='left', ipadx= 5, expand=False )
-     
+    SearchListBox.bind("<<ComboboxSelected>>", ComboChange)
             
                
                  
@@ -139,7 +140,6 @@ def InitScreen():
     listBox2 = Listbox(frameList, selectmode='extended',\
     font=fontMidium, width=10, height=15, \
     borderwidth=12, relief='ridge', yscrollcommand=LBScrollbar.set)
-    listBox2.bind('<<ListboxSelect>>', event_for_listbox)
     listBox2.pack(side='left', anchor='n', expand=True, fill="x")
     
 
@@ -196,6 +196,66 @@ def onSearch(): # "검색" 버튼 이벤트처리
 
 def getStr(s): 
     return '' if not s else s
+
+def ComboChange(self):
+    # 시도 자르기
+
+    #만약 아래 콤보값과 같으면 리스트 박스에 넣기
+    SearchCity(SearchListBox.get())
+
+def SearchCity(city):
+    from urllib.request import urlopen # 원격에서 가져오기
+    from xml.etree import ElementTree
+    
+    global listBox
+    global Lat
+    global Lon
+    global Name
+
+    listBox.delete(0,listBox.size())
+
+    key = '50e822b566c5445e99f7d7582aea21ec' 
+    Index = 11
+    Type = 'xml'
+    pSize = '1000'
+    check = 0
+    out = 0
+    i = 1
+    for n in range(11):
+        Index = str(n)
+        url = 'https://openapi.gg.go.kr/Publtolt?key='\
+        + key+'&pIndex=' + Index + '&Type=' + Type + '&pSize=' + pSize
+        response = urlopen(url).read()
+
+        strxml = response.decode('utf-8') # xml 해석하기
+        parseData = ElementTree.fromstring(strxml)
+    
+        elements = parseData.iter('row')
+        
+
+
+        for item in elements:
+            part_el = item.find('REFINE_LOTNO_ADDR')
+            if item.find('REFINE_ROADNM_ADDR').text == None:
+                continue
+            strings = item.find('REFINE_ROADNM_ADDR').text.split(' ', 2)
+
+            if strings[1] != city or part_el.text == None:
+                continue
+            if InputLabel.get() in part_el.text:
+                _text = '[' + str(i) + '] ' + \
+                getStr(item.find('PBCTLT_PLC_NM').text)
+
+                listBox.insert(i-1, _text)
+                Lat.insert(i - 1, item.find('REFINE_WGS84_LAT').text)
+                Lon.insert(i - 1, item.find('REFINE_WGS84_LOGT').text)
+
+                Name.insert(i - 1, item.find('PBCTLT_PLC_NM').text)
+                Address.insert(i - 1, item.find('REFINE_ROADNM_ADDR').text)
+                Number.insert(i - 1, item.find('MANAGE_INST_TELNO').text)
+                OpenTime.insert(i - 1, item.find('OPEN_TM_INFO').text)
+
+                i = i+1
 
 def Search(num):
     from urllib.request import urlopen # 원격에서 가져오기
