@@ -42,13 +42,6 @@ def InitScreen():
         font=fontMidium2, activestyle='none', 
         width=10, height=1, borderwidth=12, relief='flat', 
         yscrollcommand=LBScrollbar.set) 
-    slist = ["서울특별시", "경기도", "인천광역시"]
-    for i, s in enumerate(slist): 
-        SearchListBox.insert(i, s)
-    SearchListBox.pack(side='left', ipadx= 5, expand=False, \
-                            )
-    LBScrollbar.pack(side="left")
-    LBScrollbar.config(command=SearchListBox.yview) 
     
     sendEmailButton = Button(frameCombo, font = fontMidium, text='이메일', command = MailButton) 
     sendEmailButton.pack(side='right', padx=0)
@@ -74,8 +67,17 @@ def InitScreen():
     borderwidth=12, relief='ridge', yscrollcommand=LBScrollbar.set)
     listBox.bind('<<ListboxSelect>>', event_for_listbox)
     listBox.pack(side='left', anchor='n', expand=True, fill="x")
-    LBScrollbar.pack(side='right', fill='y')
+    LBScrollbar.pack(side='left', fill='y')
     LBScrollbar.config(command=listBox.yview)
+    
+    global listBox2
+    listBox2 = Listbox(frameList, selectmode='extended',\
+    font=fontMidium, width=10, height=15, \
+    borderwidth=12, relief='ridge', yscrollcommand=LBScrollbar.set)
+    listBox2.bind('<<ListboxSelect>>', event_for_listbox)
+    listBox2.pack(side='left', anchor='n', expand=True, fill="x")
+    
+    
     
 def event_for_listbox(event):
     global data
@@ -107,6 +109,7 @@ def getStr(s):
     return '' if not s else s
 
 def Search(num):
+    from urllib.request import urlopen # 원격에서 가져오기
     from xml.etree import ElementTree
     
     global listBox
@@ -116,41 +119,42 @@ def Search(num):
 
     listBox.delete(0,listBox.size())
 
-    text = ""
-    if num == 0:
-        text = "Seoul.xml"
-    elif num == 1:
-        text = "Gyeonggi.xml"
-    elif num == 2:
-        text = "Incheon.xml"
-
-    with open(text, 'rb') as f:
-        strXml = f.read().decode('utf-8')
-        parseData = ElementTree.fromstring(strXml) 
-    
-    elements = parseData.iter('toilet')
+    key = '50e822b566c5445e99f7d7582aea21ec' 
+    Index = 11
+    Type = 'xml'
+    pSize = '1000'
+    check = 0
+    out = 0
     i = 1
+    for n in range(11):
+        Index = str(n)
+        url = 'https://openapi.gg.go.kr/Publtolt?key='\
+        + key+'&pIndex=' + Index + '&Type=' + Type + '&pSize=' + pSize
+        response = urlopen(url).read()
 
-    for item in elements:
-        part_el = item.find('ADRES')
-
-        if part_el.text == None:
-            continue
-        if InputLabel.get() not in part_el.text:
-            continue
+        strxml = response.decode('utf-8') # xml 해석하기
+        parseData = ElementTree.fromstring(strxml)
+    
+        elements = parseData.iter('row')
         
-        _text = '[' + str(i) + '] ' + \
-         getStr(item.find('NAME').text) + \
-         ' : ' + getStr(item.find('ADRES').text) + \
-         ' : ' + getStr(item.find('OPEN_TIME').text) + \
-         ' : ' +  getStr(item.find('LAT').text) + \
-         ' : ' +  getStr(item.find('LNG').text)
+        for item in elements:
+            part_el = item.find('REFINE_LOTNO_ADDR')
+                                
+            if part_el.text == None:
+                continue
+            if InputLabel.get() in part_el.text:
+                _text = '[' + str(i) + '] ' + \
+                getStr(item.find('PBCTLT_PLC_NM').text)
 
-        listBox.insert(i-1, _text)
-        Lat.insert(i - 1, item.find('LAT').text)
-        Lon.insert(i - 1, item.find('LNG').text)
-        Name.insert(i - 1, item.find('NAME').text)
-        i = i+1
+                listBox.insert(i-1, _text)
+                Lat.insert(i - 1, item.find('REFINE_WGS84_LAT').text)
+                Lon.insert(i - 1, item.find('REFINE_WGS84_LOGT').text)
+                Name.insert(i - 1, item.find('PBCTLT_PLC_NM').text)
+                i = i+1
+               
+                
+        
+            
 
 
 
@@ -179,9 +183,6 @@ def Pressed():
     if Lat_Data  == None or Lon_Data == None: # 둘 중 하나가 None이면
         msg.showinfo("Information", "해당 위도 경도가 존재하지 않습니다.")
         return
-
-
-
     
     map_osm = folium.Map(location=[Lat_Data,Lon_Data], zoom_start=13)
     # 마커 지정
