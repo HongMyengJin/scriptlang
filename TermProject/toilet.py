@@ -55,9 +55,9 @@ def InitScreen():
     fontTitle = font.Font(g_Tk, size=22, weight='bold', family='경기천년제목 Bold')
     
     fontNormal = font.Font(g_Tk, size = 15, weight='bold')
-    frameTitle = Frame(g_Tk, padx=10, pady=10, bg='#009933')
+    frameTitle = Frame(g_Tk, padx =10, pady=10, bg='#009933')
     frameTitle.pack(side="top", fill="x")
-    frameCombo = Frame(g_Tk,padx = 15, pady=10, bg='#009933')
+    frameCombo = Frame(g_Tk, pady=10, bg='#009933')
     frameCombo.pack(side='top', fill='x')
     frameMail = Frame(g_Tk,padx = 15, pady=10, bg='#009933')
     frameMail.pack(side='top', fill='x')
@@ -77,19 +77,21 @@ def InitScreen():
         width=10, height=1, borderwidth=12, relief='flat', 
         yscrollcommand=LBScrollbar.set) 
     
+    SearchButton = Button(frameEntry, font=fontMidium, \
+           text='검색', command = onSearch)
+    SearchButton.pack(side='right', padx=10, expand=False, fill='y')
+
     global InputLabel 
     InputLabel = Entry(frameEntry, font = fontMidium, \
             width = 26, borderwidth = 12, relief = 'flat')
-    InputLabel.pack(side="left", padx= 10, expand = False)
+    InputLabel.pack(side="right", padx= 0, expand = False)
 
     global InputEmail 
     InputEmail = Entry(frameCombo, font = fontMidium, \
             width = 46, borderwidth = 12, relief = 'flat')
-    InputEmail.pack(side="left", padx= 5, pady = 20, expand = False)
+    InputEmail.pack(side="right", padx= 71.5, pady = 20, expand = False)
     
-    SearchButton = Button(frameEntry, font=fontMidium, \
-           text='검색', command = onSearch)
-    SearchButton.pack(side='left', padx=10, expand=False, fill='y')
+
     
     global listBox
     LBScrollbar = Scrollbar(frameList)
@@ -112,7 +114,7 @@ def InitScreen():
     imageLabel = ImageLabel(frameCombo, width=47, height=45)
     imageLabel.setImage('Email.gif')
     imageLabel.bind('<Button-1>', MailButton)
-    imageLabel.pack()
+    imageLabel.pack(side = "right", fill = X)
 
     frameMap2 = Frame(g_Tk, bg='#009933')
     frameMap2.pack(side="bottom")
