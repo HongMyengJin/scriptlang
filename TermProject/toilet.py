@@ -22,6 +22,7 @@ indexData = []
 Data = [Name, Address, Number, OpenTime, Lat, Lon]
 Lat_Data = 0.0
 Lon_Data = 0.0
+Name_Data = ""
 
 text =""
 data =""
@@ -163,6 +164,7 @@ def event_for_listbox(event):
     global Data
     global listBox2
     global indexData
+    global Name_Data
     selection = event.widget.curselection()
     if selection:
         index = selection[0]
@@ -170,6 +172,7 @@ def event_for_listbox(event):
 
         Lat_Data = Data[4][indexData[index]]
         Lon_Data = Data[5][indexData[index]]
+        Name_Data = Data[0][indexData[index]]
         listBox2.delete(0, 3)
         listBox2.insert(0, "화장실명:" + Data[0][indexData[index]])
         listBox2.insert(1, "소재지도로명주소:" + Data[1][indexData[index]])
@@ -309,6 +312,7 @@ def sendMail(fromAddr, toAddr, msg):
     s.close()
 
 def Pressed(self):
+    global Name_Data
     global Lat_Data
     global Lon_Data
     # Create a Map with Folium and Leaflet.js (위도 경도 지정) 
