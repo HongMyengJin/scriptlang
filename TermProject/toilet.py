@@ -89,7 +89,7 @@ def InitScreen():
     global InputEmail 
     InputEmail = Entry(frameCombo, font = fontMidium, \
             width = 46, borderwidth = 12, relief = 'flat')
-    InputEmail.pack(side="right", padx= 71.5, pady = 20, expand = False)
+    InputEmail.pack(side="left", padx= 71.5, pady = 20, expand = False)
     
 
     
