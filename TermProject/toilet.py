@@ -1,4 +1,4 @@
-from msilib.schema import ListBox
+from msilib.schema import CheckBox, ListBox
 from tkinter import *
 from tkinter import font
 import tkinter.ttk as ttk
@@ -8,18 +8,19 @@ from tkinter import messagebox as msg
 g_Tk = Tk()
 g_Tk.geometry("900x700+450+100")
 
-
-
 Lat = []
 Lon = []
 
+IsPublic = []
+
 Name = []
 Address = []
+Manage = []
 Number = []
 OpenTime = []
 indexData = []
 #       0       1       2       3          4   5    6
-Data = [Name, Address, Number, OpenTime, Lat, Lon]
+Data = [Name, Address, Number, OpenTime, Lat, Lon ]
 Lat_Data = 0.0
 Lon_Data = 0.0
 Name_Data = ""
@@ -68,7 +69,8 @@ def InitScreen():
     frameTitle.pack(fill='x')
     frameCombo = Frame(g_Tk, pady=10, bg='#009933')
     frameCombo.pack(side='top', fill='x')
-
+    frameCheck = Frame(g_Tk, pady=10, bg='#009933')
+    frameCheck.pack(side='top', fill='x')
     frameMail = Frame(g_Tk,padx = 15, pady=10, bg='#009933')
     frameMail.pack(side='top', fill='x')
     frameEntry = Frame(g_Tk,padx=8.8, pady=10, bg='#009933')
@@ -82,6 +84,11 @@ def InitScreen():
     # MainText = Label(frameTitle, font = fontTitle, text="[공중 화장실 찾기 App]")
     # MainText.pack(anchor="center", fill="both")
 
+    global chkValue
+    chkValue = IntVar()
+    ttk.Checkbutton(frameCombo, text="공용화장실여부", variable=chkValue).pack(side='left')
+    print(chkValue.get())
+
     global SearchListBox 
     slist = ["가평군", "고양시", "과천시","광명시", "광주시", "구리시", 
              "군포시", "김포시", "남양주시", "동두천시", "부천시", "수원시", 
@@ -91,17 +98,13 @@ def InitScreen():
              "화성시"] 
     SearchListBox = ttk.Combobox(frameCombo, values = slist)
     SearchListBox.set('시/군 선택')    
-    SearchListBox.pack(side='left', ipadx= 5, expand=False )
+    SearchListBox.pack(side='left', padx= 5, expand=False )
+     
     SearchListBox.bind("<<ComboboxSelected>>", ComboChange)
             
-               
-                 
+              
     #for i, s in enumerate(slist): 
      #   SearchListBox.insert(i, s)
-                            
-   
-   
-    
     
     
     SearchButton = Button(frameEntry, font=fontMidium, \
@@ -128,11 +131,10 @@ def InitScreen():
             width = 30, borderwidth = 12, relief = 'flat')
     InputEmail.pack(side="right", pady = 20, expand = False)
     
-    
     global listBox
     LBScrollbar = Scrollbar(frameList)
     listBox = Listbox(frameList, selectmode='extended',\
-    font=fontMidium, width=10, height=15, \
+    font=fontMidium, width=3, height=15, \
     borderwidth=12, relief='ridge', yscrollcommand=LBScrollbar.set)
     listBox.bind('<<ListboxSelect>>', event_for_listbox)
     listBox.pack(side='left', anchor='n', expand=True, fill="x")
@@ -141,19 +143,60 @@ def InitScreen():
     
     global listBox2
     listBox2 = Listbox(frameList, selectmode='extended',\
-    font=fontMidium, width=10, height=15, \
-    borderwidth=12, relief='ridge', yscrollcommand=LBScrollbar.set)
+    font=fontMidium, width=5, height=7, \
+    borderwidth=12, background = 'skyblue', relief='flat', yscrollcommand=LBScrollbar.set)
     listBox2.pack(side='left', anchor='n', expand=True, fill="x")
-    
 
-
-    frameMap2 = Frame(g_Tk, bg='#009933')
-    frameMap2.pack(side="bottom")
+    frameMap2 = Frame(frameEntry, bg='#009933')
+    frameMap2.pack(side="left")
     
     imageLabel2 = ImageLabel(frameMap2, width=150, height=100)
     imageLabel2.setImage('map.gif')
     imageLabel2.bind('<Button-1>', Pressed)
-    imageLabel2.pack(side = "bottom", fill = X)
+    imageLabel2.pack(side = "left", fill = X)
+    
+    global w
+    w = Canvas(frameEntry,width = 5, height=100, bg='green')
+    w.pack(side='left', anchor='n', expand=True, fill="x")
+    drawGraph(w, [10, 67, 9, 15], 250, 100) 
+
+def drawGraph(canvas, data, canvasWidth, canvasHeight): 
+    canvas.delete("grim") # 기존 그림 지우기
+    if not len(data): # 데이터 없으면 return
+        canvas.create_text(canvasWidth/2,(canvasHeight/2), 
+        text="No Data", tags="grim") 
+        return
+    nData = len(data) # 데이터 개수, 최대값, 최소값 얻어 놓기
+    nMax = max(data) 
+    nMin = min(data)
+    # background 그리기
+    canvas.create_rectangle(0, 0, canvasWidth, canvasHeight, fill='white', tag="grim")
+
+    if nMax == 0: # devide by zero 방지
+        nMax=1
+    rectWidth = (canvasWidth // nData) 
+    # 데이터 1개의 폭. 
+    bottom = canvasHeight - 2 # bar의 bottom 위치 
+    maxheight = canvasHeight - 4 # bar의 최대 높이.(위/아래 각각 20씩 여유.)
+    for i in range(nData): # 각 데이터에 대해.. 
+        # max/min은 특별한 색으로.
+        if nMax == data[i]: 
+            color="red" 
+        elif nMin == data[i]: 
+            color='blue' 
+        else: 
+            color="grey" 
+        curHeight = maxheight * data[i] / nMax # 최대값에 대한 비율 반영
+        top = bottom - curHeight # bar의 top 위치
+        left = i * rectWidth # bar의 left 위치
+        right = (i + 1) * rectWidth # bar의 right 위치
+        canvas.create_rectangle(left, top, right, bottom, fill=color, tag="grim", activefill='yellow')
+        # 위에 값, 아래에 번호. 
+        canvas.create_text((left+right)//2, top-10, text=data[i], tags="grim") 
+        canvas.create_text((left+right)//2, bottom+10, text=i+1, tags="grim")
+    
+    
+    
     
 def event_for_listbox(event):
     global data
@@ -197,6 +240,8 @@ def onSearch(): # "검색" 버튼 이벤트처리
      Search(0)
 
 
+
+
 def getStr(s): 
     return '' if not s else s
 
@@ -226,8 +271,6 @@ def SearchCity(city):
     Index = 11
     Type = 'xml'
     pSize = '1000'
-    check = 0
-    out = 0
     i = 1
 
     for n in range(11):
@@ -240,15 +283,15 @@ def SearchCity(city):
         parseData = ElementTree.fromstring(strxml)
     
         elements = parseData.iter('row')
-        
-
 
         for item in elements:
             part_el = item.find('REFINE_LOTNO_ADDR')
             if item.find('REFINE_ROADNM_ADDR').text == None:
                 continue
             strings = item.find('REFINE_ROADNM_ADDR').text.split(' ', 2)
-
+            checkbox = item.find('MALE_FEMALE_TOILET_YN').text
+            #print(checkbox)
+            
             if strings[1] != city or part_el.text == None:
                 continue
             else:
@@ -284,12 +327,6 @@ def Search_Name():
             indexData.append(i)
             listBox2
             j = j + 1
-    
-            
-    
-        
-            
-
 
 
 def MailButton(self):
@@ -322,8 +359,7 @@ def Pressed(self):
     
     map_osm = folium.Map(location=[Lat_Data,Lon_Data], zoom_start=13)
     # 마커 지정
-    folium.Marker([Lat_Data,Lon_Data],
-    popup= Name_Data).add_to(map_osm)
+    folium.Marker(Data[4],Data[5], popup= '0').add_to(map_osm)
     # html 파일로 저장
     map_osm.save('osm.html')
     webbrowser.open_new('osm.html')
