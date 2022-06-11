@@ -5,7 +5,7 @@ import folium
 import webbrowser
 from tkinter import messagebox as msg
 g_Tk = Tk()
-g_Tk.geometry("500x700+450+100")
+g_Tk.geometry("900x700+450+100")
 
 text =""
 data =""
@@ -19,6 +19,38 @@ Name = []
 Name_Data = ""
 fontMidium= font.Font(g_Tk, size = 15, weight='bold', family='경기천년제목 Medium')
 fontMidium2= font.Font(g_Tk, size = 16, weight='bold', family='경기천년제목 Medium')
+
+class ImageLabel(Label):
+    def __init__(self, parent, filenameOrUrl = None, width = 0, height = 0):
+        super().__init__(parent)
+        if width:
+            self.width = width
+        if height:
+            self.height = height
+        if filenameOrUrl:
+            self.setImage(filenameOrUrl)
+
+    def setImage(self, filenameOrUrl):
+        from PIL import Image, ImageTk
+        if filenameOrUrl.startswith('http'):
+            from io import BytesIO
+            import urllib.request
+            url = filenameOrUrl
+            try:
+                with urllib.request.urlopen(url) as u:
+                    raw_data = u.read()
+            except urllib.error.URLError:
+                print('urllib.error.URLError!')
+                return
+            im = Image.open(BytesIO(raw_data))
+        elif filenameOrUrl:
+            im= (Image.open(filenameOrUrl))
+        im = im.resize((self.width,self.height), Image.ANTIALIAS)
+        img = ImageTk.PhotoImage(im)
+        self.configure(image = img)
+        self.image = img
+
+
 def InitScreen():
     fontTitle = font.Font(g_Tk, size=22, weight='bold', family='경기천년제목 Bold')
     
@@ -27,6 +59,8 @@ def InitScreen():
     frameTitle.pack(side="top", fill="x")
     frameCombo = Frame(g_Tk,padx = 15, pady=10, bg='#009933')
     frameCombo.pack(side='top', fill='x')
+    frameMail = Frame(g_Tk,padx = 15, pady=10, bg='#009933')
+    frameMail.pack(side='top', fill='x')
     frameEntry = Frame(g_Tk,padx=10, pady=10, bg='#009933')
     frameEntry.pack(side="top", fill="x")
     frameList = Frame(g_Tk, padx=10, pady=10, bg='#009933')
@@ -43,9 +77,6 @@ def InitScreen():
         width=10, height=1, borderwidth=12, relief='flat', 
         yscrollcommand=LBScrollbar.set) 
     
-    sendEmailButton = Button(frameCombo, font = fontMidium, text='이메일', command = MailButton) 
-    sendEmailButton.pack(side='right', padx=0)
-    
     global InputLabel 
     InputLabel = Entry(frameEntry, font = fontMidium, \
             width = 26, borderwidth = 12, relief = 'flat')
@@ -53,8 +84,8 @@ def InitScreen():
 
     global InputEmail 
     InputEmail = Entry(frameCombo, font = fontMidium, \
-            width = 86, borderwidth = 12, relief = 'flat')
-    InputEmail.pack(side="left", padx= 10, pady = 20, expand = False)
+            width = 46, borderwidth = 12, relief = 'flat')
+    InputEmail.pack(side="left", padx= 5, pady = 20, expand = False)
     
     SearchButton = Button(frameEntry, font=fontMidium, \
            text='검색', command = onSearch)
@@ -78,6 +109,18 @@ def InitScreen():
     listBox2.pack(side='left', anchor='n', expand=True, fill="x")
     
     
+    imageLabel = ImageLabel(frameCombo, width=47, height=45)
+    imageLabel.setImage('Email.gif')
+    imageLabel.bind('<Button-1>', MailButton)
+    imageLabel.pack()
+
+    frameMap2 = Frame(g_Tk, bg='#009933')
+    frameMap2.pack(side="bottom")
+    
+    imageLabel2 = ImageLabel(frameMap2, width=150, height=100)
+    imageLabel2.setImage('map.gif')
+    imageLabel2.bind('<Button-1>', Pressed)
+    imageLabel2.pack(side = "bottom", fill = X)
     
 def event_for_listbox(event):
     global data
@@ -158,7 +201,7 @@ def Search(num):
 
 
 
-def MailButton():
+def MailButton(self):
     global data
     print(data)
     msg = MIMEText(data) 
@@ -176,7 +219,7 @@ def sendMail(fromAddr, toAddr, msg):
     s.sendmail(fromAddr , [toAddr], msg.as_string()) 
     s.close()
 
-def Pressed():
+def Pressed(self):
     global Lat_Data
     global Lon_Data
     # Create a Map with Folium and Leaflet.js (위도 경도 지정) 
@@ -194,8 +237,7 @@ def Pressed():
 
 
 InitScreen()
-g_Tk.title("toilet information")
-Button(g_Tk, font=fontMidium, text='지도 보기', command=Pressed).pack()
+
 g_Tk.mainloop()
 
     
