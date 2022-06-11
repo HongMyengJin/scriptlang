@@ -86,7 +86,7 @@ def InitScreen():
 
     global chkValue
     chkValue = IntVar()
-    ttk.Checkbutton(frameCombo, text="공용화장실여부", variable=chkValue).pack(side='left')
+    CheckButton = ttk.Checkbutton(frameCombo, text="공용화장실여부", variable=chkValue, command = Search_Name).pack(side='left')
     print(chkValue.get())
 
     global SearchListBox 
@@ -359,7 +359,7 @@ def Pressed(self):
     
     map_osm = folium.Map(location=[Lat_Data,Lon_Data], zoom_start=13)
     # 마커 지정
-    folium.Marker(Data[4],Data[5], popup= '0').add_to(map_osm)
+    folium.Marker([Lat_Data,Lon_Data], popup= Name_Data).add_to(map_osm)
     # html 파일로 저장
     map_osm.save('osm.html')
     webbrowser.open_new('osm.html')
