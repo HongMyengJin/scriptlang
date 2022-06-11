@@ -19,9 +19,8 @@ Name = []
 Name_Data = ""
 fontMidium= font.Font(g_Tk, size = 15, weight='bold', family='경기천년제목 Medium')
 fontMidium2= font.Font(g_Tk, size = 16, weight='bold', family='경기천년제목 Medium')
-
 class ImageLabel(Label):
-    def __init__(self, parent, filenameOrUrl = None, width = 0, height = 0):
+    def __init__(self, parent, filenameOrUrl = None, width = 0, height = 0, imageLabel = None):
         super().__init__(parent)
         if width:
             self.width = width
@@ -55,21 +54,21 @@ def InitScreen():
     fontTitle = font.Font(g_Tk, size=22, weight='bold', family='경기천년제목 Bold')
     
     fontNormal = font.Font(g_Tk, size = 15, weight='bold')
-    frameTitle = Frame(g_Tk, padx =10, pady=10, bg='#009933')
-    frameTitle.pack(side="top", fill="x")
+    frameTitle = Frame(g_Tk, padx = 10, pady=10, bg='#009933')
+    frameTitle.pack(fill='x')
     frameCombo = Frame(g_Tk, pady=10, bg='#009933')
     frameCombo.pack(side='top', fill='x')
     frameMail = Frame(g_Tk,padx = 15, pady=10, bg='#009933')
     frameMail.pack(side='top', fill='x')
-    frameEntry = Frame(g_Tk,padx=10, pady=10, bg='#009933')
+    frameEntry = Frame(g_Tk,padx=8.8, pady=10, bg='#009933')
     frameEntry.pack(side="top", fill="x")
-    frameList = Frame(g_Tk, padx=10, pady=10, bg='#009933')
+    frameList = Frame(g_Tk, padx=30, pady=10, bg='#009933')
     frameList.pack(side="top", fill="both", expand=True)
     frameMap = Frame(g_Tk, padx=10, pady=10, bg='#009933')
     frameMap.pack(side="bottom", fill="both", expand=True)
 #경기천년제목 Medium
-    MainText = Label(frameTitle, font = fontTitle, text="[공중 화장실 찾기 App]")
-    MainText.pack(anchor="center", fill="both")
+    # MainText = Label(frameTitle, font = fontTitle, text="[공중 화장실 찾기 App]")
+    # MainText.pack(anchor="center", fill="both")
     global SearchListBox 
     LBScrollbar = Scrollbar(frameCombo)
     SearchListBox = Listbox(frameCombo, \
@@ -79,19 +78,28 @@ def InitScreen():
     
     SearchButton = Button(frameEntry, font=fontMidium, \
            text='검색', command = onSearch)
-    SearchButton.pack(side='right', padx=10, expand=False, fill='y')
+    SearchButton.pack(side='right', padx= 6, expand=False, fill='y')
 
     global InputLabel 
     InputLabel = Entry(frameEntry, font = fontMidium, \
             width = 26, borderwidth = 12, relief = 'flat')
-    InputLabel.pack(side="right", padx= 0, expand = False)
+    InputLabel.pack(side="right", padx= 10, expand = False)
+    global imageLabel
+    imageLabel = ImageLabel(frameCombo, width=55, height=55)
+    imageLabel.setImage('Email_Close.gif')
+    imageLabel.bind('<Button-1>', MailButton)
+    imageLabel.pack(side = "right", padx= 15)
+
+
+    imageLabel3 = ImageLabel(frameTitle, width=860, height=150)
+    imageLabel3.setImage('AppName.gif')
+    imageLabel3.pack(side = "top", expand = False)
 
     global InputEmail 
     InputEmail = Entry(frameCombo, font = fontMidium, \
-            width = 46, borderwidth = 12, relief = 'flat')
-    InputEmail.pack(side="left", padx= 71.5, pady = 20, expand = False)
+            width = 30, borderwidth = 12, relief = 'flat')
+    InputEmail.pack(side="right", pady = 20, expand = False)
     
-
     
     global listBox
     LBScrollbar = Scrollbar(frameList)
@@ -111,10 +119,7 @@ def InitScreen():
     listBox2.pack(side='left', anchor='n', expand=True, fill="x")
     
     
-    imageLabel = ImageLabel(frameCombo, width=47, height=45)
-    imageLabel.setImage('Email.gif')
-    imageLabel.bind('<Button-1>', MailButton)
-    imageLabel.pack(side = "right", fill = X)
+
 
     frameMap2 = Frame(g_Tk, bg='#009933')
     frameMap2.pack(side="bottom")
@@ -139,11 +144,13 @@ def event_for_listbox(event):
         Lon_Data = Lon[index]
         Name_Data = Name[index]
         print(data)
+    imageLabel.setImage('Email_Close.gif')
 
         
 def onSearch(): # "검색" 버튼 이벤트처리
     global SearchListBox
     listBox.yview
+    imageLabel.setImage('Email_Close.gif')
     sels = SearchListBox.curselection()
     iSearchIndex = \
         0 if len(sels) == 0 else SearchListBox.curselection()[0]
@@ -209,6 +216,7 @@ def MailButton(self):
     msg = MIMEText(data) 
     msg['Subject'] = '제목: 공중화장실 데이터'
     sendMail('mongjinjin@tukorea.ac.kr', InputEmail.get(), msg)
+    imageLabel.setImage('Email.gif')
 
 from email.mime.text import MIMEText
 def sendMail(fromAddr, toAddr, msg):
