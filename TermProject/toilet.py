@@ -1,4 +1,4 @@
-from msilib.schema import ListBox
+from msilib.schema import CheckBox, ListBox
 from tkinter import *
 from tkinter import font
 import tkinter.ttk as ttk
@@ -65,6 +65,8 @@ def InitScreen():
     frameTitle.pack(fill='x')
     frameCombo = Frame(g_Tk, pady=10, bg='#009933')
     frameCombo.pack(side='top', fill='x')
+    frameCheck = Frame(g_Tk, pady=10, bg='#009933')
+    frameCheck.pack(side='top', fill='x')
     frameMail = Frame(g_Tk,padx = 15, pady=10, bg='#009933')
     frameMail.pack(side='top', fill='x')
     frameEntry = Frame(g_Tk,padx=8.8, pady=10, bg='#009933')
@@ -89,7 +91,10 @@ def InitScreen():
     SearchListBox.set('시/군 선택')    
     SearchListBox.pack(side='left', ipadx= 5, expand=False )
      
-            
+    global CheckBox
+    chkValue = IntVar()
+    ttk.Checkbutton(frameCheck, text="공용화장실여부", variable=chkValue).pack(side='left')
+    print(chkValue.get())
                
                  
     #for i, s in enumerate(slist): 
@@ -124,7 +129,6 @@ def InitScreen():
             width = 30, borderwidth = 12, relief = 'flat')
     InputEmail.pack(side="right", pady = 20, expand = False)
     
-    
     global listBox
     LBScrollbar = Scrollbar(frameList)
     listBox = Listbox(frameList, selectmode='extended',\
@@ -141,7 +145,6 @@ def InitScreen():
     borderwidth=12, relief='ridge', yscrollcommand=LBScrollbar.set)
     listBox2.bind('<<ListboxSelect>>', event_for_listbox)
     listBox2.pack(side='left', anchor='n', expand=True, fill="x")
-    
 
 
     frameMap2 = Frame(g_Tk, bg='#009933')
@@ -240,15 +243,13 @@ def Search(num):
                 Lon.insert(i - 1, item.find('REFINE_WGS84_LOGT').text)
 
                 Name.insert(i - 1, item.find('PBCTLT_PLC_NM').text)
+                
                 Address.insert(i - 1, item.find('REFINE_ROADNM_ADDR').text)
                 Number.insert(i - 1, item.find('MANAGE_INST_TELNO').text)
                 OpenTime.insert(i - 1, item.find('OPEN_TM_INFO').text)
 
                 i = i+1
                
-
-        
-            
 
 
 
@@ -281,8 +282,7 @@ def Pressed(self):
     
     map_osm = folium.Map(location=[Lat_Data,Lon_Data], zoom_start=13)
     # 마커 지정
-    folium.Marker([Lat_Data,Lon_Data],
-    popup= Name_Data).add_to(map_osm)
+    folium.Marker([Lat_Data,Lon_Data], popup= Name_Data).add_to(map_osm)
     # html 파일로 저장
     map_osm.save('osm.html')
     webbrowser.open_new('osm.html')
