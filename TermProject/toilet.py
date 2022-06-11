@@ -19,8 +19,9 @@ Manage = []
 Number = []
 OpenTime = []
 indexData = []
+GB_Check = []
 #       0       1       2       3          4   5    6
-Data = [Name, Address, Number, OpenTime, Lat, Lon ]
+Data = [Name, Address, Number, OpenTime, Lat, Lon, GB_Check ]
 Lat_Data = 0.0
 Lon_Data = 0.0
 Name_Data = ""
@@ -85,8 +86,10 @@ def InitScreen():
     # MainText.pack(anchor="center", fill="both")
 
     global chkValue
+    global CheckButton
     chkValue = IntVar()
-    CheckButton = ttk.Checkbutton(frameCombo, text="공용화장실여부", variable=chkValue, command = Search_Name).pack(side='left')
+    
+    CheckButton = ttk.Checkbutton(frameCombo, text="공용화장실여부", variable=chkValue, command = Check_Public).pack(side='left')
     print(chkValue.get())
 
     global SearchListBox 
@@ -225,7 +228,7 @@ def event_for_listbox(event):
             listBox2.insert(2, Data[2][indexData[index]])
 
         listBox2.insert(3, "개방시간:" + Data[3][indexData[index]])
-
+        listBox2.insert(3, "개방시간:" + Data[6][indexData[index]])
         print(data)
     imageLabel.setImage('Email_Close.gif')
 
@@ -262,7 +265,7 @@ def SearchCity(city):
     global Data
     global indexData
     global InputLabel
-
+    global chkValue
     InputLabel.delete(0, 'end')
     indexData.clear()
     listBox.delete(0,listBox.size())
@@ -271,8 +274,10 @@ def SearchCity(city):
     Index = 11
     Type = 'xml'
     pSize = '1000'
-    i = 1
-
+    t = 1
+    chkValue.set(0)
+    for i in range(0, 7):
+        Data[i].clear()
     for n in range(11):
         Index = str(n)
         url = 'https://openapi.gg.go.kr/Publtolt?key='\
@@ -289,24 +294,24 @@ def SearchCity(city):
             if item.find('REFINE_ROADNM_ADDR').text == None:
                 continue
             strings = item.find('REFINE_ROADNM_ADDR').text.split(' ', 2)
-            checkbox = item.find('MALE_FEMALE_TOILET_YN').text
             #print(checkbox)
             
             if strings[1] != city or part_el.text == None:
                 continue
             else:
-                _text = '[' + str(i) + '] ' + \
+                _text = '[' + str(t) + '] ' + \
                 getStr(item.find('PBCTLT_PLC_NM').text)
-                listBox.insert(i-1, _text)
+                listBox.insert(t-1, _text)
 
-                Data[0].insert(i - 1, item.find('PBCTLT_PLC_NM').text)
-                Data[1].insert(i - 1, item.find('REFINE_ROADNM_ADDR').text)
-                Data[2].insert(i - 1, item.find('MANAGE_INST_TELNO').text)
-                Data[3].insert(i - 1, item.find('OPEN_TM_INFO').text)
-                Data[4].insert(i - 1, item.find('REFINE_WGS84_LAT').text)
-                Data[5].insert(i - 1, item.find('REFINE_WGS84_LOGT').text)
-                indexData.append(i - 1)
-                i = i+1
+                Data[0].insert(t - 1, item.find('PBCTLT_PLC_NM').text)
+                Data[1].insert(t - 1, item.find('REFINE_ROADNM_ADDR').text)
+                Data[2].insert(t - 1, item.find('MANAGE_INST_TELNO').text)
+                Data[3].insert(t - 1, item.find('OPEN_TM_INFO').text)
+                Data[4].insert(t - 1, item.find('REFINE_WGS84_LAT').text)
+                Data[5].insert(t - 1, item.find('REFINE_WGS84_LOGT').text)
+                Data[6].insert(t - 1, item.find('MALE_FEMALE_TOILET_YN').text)
+                indexData.append(t - 1)
+                t = t+1
 
             
 # 검색했을때
@@ -328,6 +333,37 @@ def Search_Name():
             listBox2
             j = j + 1
 
+def Check_Public():
+    global listBox2
+    global indexData
+
+    if chkValue.get() == 1: #체크 박스 누름
+        indexData_Save = []
+
+        j = 0
+        for i in range(0, listBox.size()):
+            if InputLabel.get() in Data[0][i] and Data[6][indexData[i]] == "Y":
+                j = j + 1
+                indexData_Save.append(indexData[i])
+                
+        listBox.delete(0, listBox.size())
+        listBox2.delete(0, listBox2.size())
+        for t in range(0, len(indexData_Save)):
+            listBox.insert(t, Data[0][indexData_Save[t]])
+        
+        indexData.clear()
+        indexData = indexData_Save
+    else:
+        listBox.delete(0, listBox.size())
+        listBox2.delete(0, listBox2.size())
+        indexData.clear()
+        j = 0
+        for i in range(0, len(Data[0])):
+            if InputLabel.get() in Data[0][i]:
+                listBox.insert(j, Data[0][i])
+                indexData.append(i)
+                listBox2
+                j = j + 1
 
 def MailButton(self):
     global data
