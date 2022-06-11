@@ -8,16 +8,22 @@ from tkinter import messagebox as msg
 g_Tk = Tk()
 g_Tk.geometry("900x700+450+100")
 
-text =""
-data =""
 
-Lat_Data = 0.0
-Lon_Data = 0.0
+
 Lat = []
 Lon = []
 
 Name = []
-Name_Data = ""
+Address = []
+Number = []
+OpenTime = []
+
+Lat_Data = 0.0
+Lon_Data = 0.0
+
+text =""
+data =""
+
 fontMidium= font.Font(g_Tk, size = 15, weight='bold', family='경기천년제목 Medium')
 fontMidium2= font.Font(g_Tk, size = 16, weight='bold', family='경기천년제목 Medium')
 class ImageLabel(Label):
@@ -136,7 +142,6 @@ def InitScreen():
     listBox2.bind('<<ListboxSelect>>', event_for_listbox)
     listBox2.pack(side='left', anchor='n', expand=True, fill="x")
     
-    
 
 
     frameMap2 = Frame(g_Tk, bg='#009933')
@@ -154,13 +159,27 @@ def event_for_listbox(event):
     global Lat_Data
     global Lon_Data
     global Name_Data
+    global Address_Data
+    global Number_Data
+    global OpenTime_Data2
+    global listBox2
     selection = event.widget.curselection()
     if selection:
         index = selection[0]
         data = event.widget.get(index)
         Lat_Data = Lat[index]
         Lon_Data = Lon[index]
-        Name_Data = Name[index]
+        listBox2.delete(0, 3)
+        listBox2.insert(0, "화장실명:" + Name[index])
+        listBox2.insert(1, "소재지도로명주소:" + Address[index])
+        if Number[index] != None:
+            listBox2.insert(2, "전화번호:" + Number[index])
+        else:
+            listBox2.insert(2, Number[index])
+
+        listBox2.insert(3, "개방시간:" +OpenTime[index])
+
+
         print(data)
     imageLabel.setImage('Email_Close.gif')
 
@@ -219,10 +238,15 @@ def Search(num):
                 listBox.insert(i-1, _text)
                 Lat.insert(i - 1, item.find('REFINE_WGS84_LAT').text)
                 Lon.insert(i - 1, item.find('REFINE_WGS84_LOGT').text)
+
                 Name.insert(i - 1, item.find('PBCTLT_PLC_NM').text)
+                Address.insert(i - 1, item.find('REFINE_ROADNM_ADDR').text)
+                Number.insert(i - 1, item.find('MANAGE_INST_TELNO').text)
+                OpenTime.insert(i - 1, item.find('OPEN_TM_INFO').text)
+
                 i = i+1
                
-                
+
         
             
 
