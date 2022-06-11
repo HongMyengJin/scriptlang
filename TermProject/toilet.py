@@ -17,7 +17,9 @@ Name = []
 Address = []
 Number = []
 OpenTime = []
-
+indexData = []
+#       0       1       2       3          4   5    6
+Data = [Name, Address, Number, OpenTime, Lat, Lon]
 Lat_Data = 0.0
 Lon_Data = 0.0
 
@@ -102,7 +104,7 @@ def InitScreen():
     
     
     SearchButton = Button(frameEntry, font=fontMidium, \
-           text='검색', command = onSearch)
+           text='검색', command = Search_Name)
     SearchButton.pack(side='right', padx= 6, expand=False, fill='y')
 
     global InputLabel 
@@ -158,27 +160,25 @@ def event_for_listbox(event):
     global Lon
     global Lat_Data
     global Lon_Data
-    global Name_Data
-    global Address_Data
-    global Number_Data
-    global OpenTime_Data2
+    global Data
     global listBox2
+    global indexData
     selection = event.widget.curselection()
     if selection:
         index = selection[0]
         data = event.widget.get(index)
-        Lat_Data = Lat[index]
-        Lon_Data = Lon[index]
+
+        Lat_Data = Data[4][indexData[index]]
+        Lon_Data = Data[5][indexData[index]]
         listBox2.delete(0, 3)
-        listBox2.insert(0, "화장실명:" + Name[index])
-        listBox2.insert(1, "소재지도로명주소:" + Address[index])
+        listBox2.insert(0, "화장실명:" + Data[0][indexData[index]])
+        listBox2.insert(1, "소재지도로명주소:" + Data[1][indexData[index]])
         if Number[index] != None:
-            listBox2.insert(2, "전화번호:" + Number[index])
+            listBox2.insert(2, "전화번호:" + Data[2][indexData[index]])
         else:
-            listBox2.insert(2, Number[index])
+            listBox2.insert(2, Data[2][indexData[index]])
 
-        listBox2.insert(3, "개방시간:" +OpenTime[index])
-
+        listBox2.insert(3, "개방시간:" + Data[3][indexData[index]])
 
         print(data)
     imageLabel.setImage('Email_Close.gif')
@@ -211,9 +211,14 @@ def SearchCity(city):
     global Lat
     global Lon
     global Name
+    global Data
+    global indexData
+    global InputLabel
 
+    InputLabel.delete(0, 'end')
+    indexData.clear()
     listBox.delete(0,listBox.size())
-
+    listBox2.delete(0, listBox2.size())
     key = '50e822b566c5445e99f7d7582aea21ec' 
     Index = 11
     Type = 'xml'
@@ -221,6 +226,7 @@ def SearchCity(city):
     check = 0
     out = 0
     i = 1
+
     for n in range(11):
         Index = str(n)
         url = 'https://openapi.gg.go.kr/Publtolt?key='\
@@ -242,71 +248,42 @@ def SearchCity(city):
 
             if strings[1] != city or part_el.text == None:
                 continue
-            if InputLabel.get() in part_el.text:
+            else:
                 _text = '[' + str(i) + '] ' + \
                 getStr(item.find('PBCTLT_PLC_NM').text)
-
                 listBox.insert(i-1, _text)
-                Lat.insert(i - 1, item.find('REFINE_WGS84_LAT').text)
-                Lon.insert(i - 1, item.find('REFINE_WGS84_LOGT').text)
 
-                Name.insert(i - 1, item.find('PBCTLT_PLC_NM').text)
-                Address.insert(i - 1, item.find('REFINE_ROADNM_ADDR').text)
-                Number.insert(i - 1, item.find('MANAGE_INST_TELNO').text)
-                OpenTime.insert(i - 1, item.find('OPEN_TM_INFO').text)
-
+                Data[0].insert(i - 1, item.find('PBCTLT_PLC_NM').text)
+                Data[1].insert(i - 1, item.find('REFINE_ROADNM_ADDR').text)
+                Data[2].insert(i - 1, item.find('MANAGE_INST_TELNO').text)
+                Data[3].insert(i - 1, item.find('OPEN_TM_INFO').text)
+                Data[4].insert(i - 1, item.find('REFINE_WGS84_LAT').text)
+                Data[5].insert(i - 1, item.find('REFINE_WGS84_LOGT').text)
+                indexData.append(i - 1)
                 i = i+1
 
-def Search(num):
+            
+# 검색했을때
+def Search_Name():
     from urllib.request import urlopen # 원격에서 가져오기
     from xml.etree import ElementTree
-    
     global listBox
-    global Lat
-    global Lon
-    global Name
-
-    listBox.delete(0,listBox.size())
-
-    key = '50e822b566c5445e99f7d7582aea21ec' 
-    Index = 11
-    Type = 'xml'
-    pSize = '1000'
-    check = 0
-    out = 0
-    i = 1
-    for n in range(11):
-        Index = str(n)
-        url = 'https://openapi.gg.go.kr/Publtolt?key='\
-        + key+'&pIndex=' + Index + '&Type=' + Type + '&pSize=' + pSize
-        response = urlopen(url).read()
-
-        strxml = response.decode('utf-8') # xml 해석하기
-        parseData = ElementTree.fromstring(strxml)
+    global listBox2
+    global Data
+    global indexData
+    listBox.delete(0, listBox.size())
+    listBox2.delete(0, listBox2.size())
+    indexData.clear()
+    j = 0
+    for i in range(0, len(Data[0])):
+        if InputLabel.get() in Data[0][i]:
+            listBox.insert(j, Data[0][i])
+            indexData.append(i)
+            listBox2
+            j = j + 1
     
-        elements = parseData.iter('row')
-        
-        for item in elements:
-            part_el = item.find('REFINE_LOTNO_ADDR')
-                                
-            if part_el.text == None:
-                continue
-            if InputLabel.get() in part_el.text:
-                _text = '[' + str(i) + '] ' + \
-                getStr(item.find('PBCTLT_PLC_NM').text)
-
-                listBox.insert(i-1, _text)
-                Lat.insert(i - 1, item.find('REFINE_WGS84_LAT').text)
-                Lon.insert(i - 1, item.find('REFINE_WGS84_LOGT').text)
-
-                Name.insert(i - 1, item.find('PBCTLT_PLC_NM').text)
-                Address.insert(i - 1, item.find('REFINE_ROADNM_ADDR').text)
-                Number.insert(i - 1, item.find('MANAGE_INST_TELNO').text)
-                OpenTime.insert(i - 1, item.find('OPEN_TM_INFO').text)
-
-                i = i+1
-               
-
+            
+    
         
             
 
