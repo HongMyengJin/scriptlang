@@ -51,8 +51,11 @@ Name_Data = ""
 text =""
 data =""
 
-fontMidium= font.Font(g_Tk, size = 15, weight='bold', family='경기천년제목 Medium')
-fontMidium2= font.Font(g_Tk, size = 16, weight='bold', family='경기천년제목 Medium')
+fontMidium= font.Font(g_Tk, size = 15, family='경기천년제목 Bold')
+fontMidium2= font.Font(g_Tk, size = 14, family='경기천년제목 Medium')
+fontMidium3= font.Font(g_Tk, size = 10, family='경기천년바탕 Regular')
+fontMidium4= font.Font(g_Tk, size = 14, family='경기천년바탕 Regular')
+fontMidium5= font.Font(g_Tk, size = 13, family='경기천년바탕 Medium')
 class ImageLabel(Label):
     def __init__(self, parent, filenameOrUrl = None, width = 0, height = 0, imageLabel = None):
         super().__init__(parent)
@@ -88,13 +91,13 @@ def InitScreen():
     fontTitle = font.Font(g_Tk, size=22, weight='bold', family='경기천년제목 Bold')
     
     fontNormal = font.Font(g_Tk, size = 15, weight='bold')
-    frameTitle = Frame(g_Tk, padx = 10, pady=10, bg='#009933')
+    frameTitle = Frame(g_Tk, padx = 10, pady=10, bg='#C8E6A8')
     frameTitle.pack(fill='x')
-    frameCombo = Frame(g_Tk, pady=10, bg='#009933')
+    frameCombo = Frame(g_Tk, pady=10, bg='#C8E6A8')
     frameCombo.pack(side='top', fill='x')
-    frameEntry = Frame(g_Tk,padx=8.8, pady=10, bg='#009933')
+    frameEntry = Frame(g_Tk,padx=8.8, pady=10, bg='#C8E6A8')
     frameEntry.pack(side="top", fill="x")
-    frameList = Frame(g_Tk, padx=30, pady=10, bg='#009933')
+    frameList = Frame(g_Tk, padx=30, pady=10, bg='#C8E6A8')
     frameList.pack(side="top", fill="x")
 #경기천년제목 Medium
 
@@ -111,8 +114,10 @@ def InitScreen():
     SearchListBox = ttk.Combobox(frameCombo, values = slist)
     SearchListBox.set('시/군 선택')    
     SearchListBox.pack(side='left', padx= 5, expand=False )
+    SearchListBox.configure(font=("경기천년제목 Light", 16))
      
     SearchListBox.bind("<<ComboboxSelected>>", ComboChange)
+    
 
 
 
@@ -129,12 +134,14 @@ def InitScreen():
     chkBValue = IntVar()
     chkGValue = IntVar()
     s = ttk.Style()
-    s.configure('Green.TCheckbutton', background = '#009933', foreground = 'white')
+    s.configure('Green.TCheckbutton', background = '#C8E6A8', foreground = 'white')
     
-    CheckButton = ttk.Checkbutton(frameCombo, style = 'Green.TCheckbutton', text="공용화장실여부", variable=chkValue, command = Check_Public).pack(side='left')
-    
-    CheckButton = ttk.Checkbutton(frameCombo, text="남자 개수", variable=chkBValue, command = ' ').pack(side='left')
-    CheckButton = ttk.Checkbutton(frameCombo, text="여자 개수", variable=chkGValue, command = ' ').pack(side='left')
+    CheckButton = Checkbutton(frameCombo, bg = '#C8E6A8', activebackground= '#C8E6A8', text="공용화장실여부", variable=chkValue, font = ("경기천년제목 Light", 11), command = Check_Public).pack(side='left')
+
+    CheckButton = Checkbutton(frameCombo, bg = '#C8E6A8', activebackground= '#C8E6A8',  text="남자 개수", font = ("경기천년제목 Light", 11), variable=chkBValue, command = ' ')
+    CheckButton.pack(side='left')
+    CheckButton = Checkbutton(frameCombo,  bg = '#C8E6A8',activebackground= '#C8E6A8',text="여자 개수", font = ("경기천년제목 Light", 11), variable=chkGValue, command = ' ').pack(side='left')
+
     print(chkValue.get())
     
     
@@ -144,22 +151,22 @@ def InitScreen():
 
     global InputLabel 
     InputLabel = Entry(frameEntry, font = fontMidium, \
-            width = 10, borderwidth = 12, relief = 'flat')
+            width = 10, borderwidth = 6, relief = 'flat')
     InputLabel.pack(side="right", padx= 10, expand = False)
     global imageLabel
-    imageLabel = ImageLabel(frameCombo, width=55, height=55)
+    imageLabel = ImageLabel(frameCombo, width=40, height=35)
     imageLabel.setImage('image/Email_Close.gif')
     imageLabel.bind('<Button-1>', MailButton)
     imageLabel.pack(side = "right", padx= 15)
 
 
     imageLabel3 = ImageLabel(frameTitle, width=860, height=150)
-    imageLabel3.setImage('image/AppName.gif')
+    imageLabel3.setImage('image/AppName.png')
     imageLabel3.pack(side = "top", expand = False)
 
     global InputEmail 
-    InputEmail = Entry(frameCombo, font = fontMidium, \
-            width = 30, borderwidth = 12, relief = 'flat')
+    InputEmail = Entry(frameCombo, font = fontMidium4, \
+            width = 30, borderwidth = 8.5, relief = 'flat')
     InputEmail.pack(side="right", pady = 20, expand = False)
     
     global listBox
@@ -174,20 +181,20 @@ def InitScreen():
     
     global listBox2
     listBox2 = Listbox(frameList, selectmode='extended',\
-    font=fontMidium, width=5, height=7, \
-    borderwidth=12, background = 'skyblue', relief='flat', yscrollcommand=LBScrollbar.set)
+    font=fontMidium2, width=5, height=7, \
+    borderwidth=12, background = '#fffecb', relief='flat', yscrollcommand=LBScrollbar.set)
     listBox2.pack(side='left', anchor='n', expand=True, fill="x")
 
-    frameMap2 = Frame(frameEntry, bg='#009933')
+    frameMap2 = Frame(frameEntry, bg='#C8E6A8')
     frameMap2.pack(side="left")
     
-    imageLabel2 = ImageLabel(frameMap2, width=150, height=100)
+    imageLabel2 = ImageLabel(frameMap2, width=120, height=100)
     imageLabel2.setImage('image/map.gif')
     imageLabel2.bind('<Button-1>', Pressed)
     imageLabel2.pack(side = "left", fill = X)
     
     global w
-    w = Canvas(frameEntry,width = 5, height=100, bg='green')
+    w = Canvas(frameEntry,width = 5, height=100, bg='#C8E6A8')
     w.pack(side='left', anchor='n', expand=True, fill="x")
 
 
@@ -201,7 +208,7 @@ def drawGraph(canvas, data, canvasWidth, canvasHeight):
     nMax = max(data) 
     nMin = min(data)
     # background 그리기
-    canvas.create_rectangle(0, 0, canvasWidth, canvasHeight, fill='green', tag="grim")
+    canvas.create_rectangle(0, 0, canvasWidth, canvasHeight, fill='#C8E6A8', tag="grim")
 
     if nMax == 0: # devide by zero 방지
         nMax=1
@@ -212,20 +219,20 @@ def drawGraph(canvas, data, canvasWidth, canvasHeight):
     for i in range(nData): # 각 데이터에 대해.. 
         # max/min은 특별한 색으로.
         if nMax == data[i]: 
-            color="red" 
+            color="#e893b0" 
         elif nMin == data[i]: 
-            color='blue' 
+            color='#cce8f4' 
         else: 
-            color="grey" 
+            color="#cce8f4" 
         curHeight = maxheight * data[i] / (nMax + 50) # 최대값에 대한 비율 반영
         top = bottom - curHeight # bar의 top 위치
         left = i * rectWidth # bar의 left 위치
         right = (i + 1) * rectWidth # bar의 right 위치
-        canvas.create_rectangle(left, top, right, bottom, fill=color, tag="grim", activefill='yellow')
+        canvas.create_rectangle(left, top, right, bottom, fill=color, tag="grim", activefill='#5ec8eb')
         # 위에 값, 아래에 번호. 
-        canvas.create_text((left+right)//2, top-10, text=data[i], tags="grim") 
+        canvas.create_text((left+right)//2, top-10, text=data[i], font = fontMidium3, tags="grim") 
 
-        canvas.create_text((left+right)//2, bottom+10, text=Data[DataEnum.eName.value][ClosetList[G_bClosetEnum.B_Closet.value][i]], tags="grim")
+        canvas.create_text((left+right)//2, bottom+10, font = fontMidium3, text=Data[DataEnum.eName.value][ClosetList[G_bClosetEnum.B_Closet.value][i]], tags="grim")
 
     
     
@@ -303,7 +310,6 @@ def GraphUpdate():
     for i in range(0, 2):
         print(ClosetList[i])
 
-    if  len(ClosetList[G_bClosetEnum.B_Closet.value]) != 0:
         ListClosetN = []
         for t in range(0, len(ClosetList[G_bClosetEnum.B_Closet.value])):
             ListClosetN.append(Data[DataEnum.eB_Closet.value][ClosetList[G_bClosetEnum.B_Closet.value][t]])
