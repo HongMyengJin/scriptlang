@@ -223,7 +223,7 @@ def event_for_listbox(event):
         Lat_Data = Data[4][indexData[index]]
         Lon_Data = Data[5][indexData[index]]
         Name_Data = Data[0][indexData[index]]
-        listBox2.delete(0, 3)
+        listBox2.delete(0, 6)
         listBox2.insert(0, "화장실명:" + Data[0][indexData[index]])
         listBox2.insert(1, "소재지도로명주소:" + Data[1][indexData[index]])
         if Number[index] != None:
@@ -232,7 +232,9 @@ def event_for_listbox(event):
             listBox2.insert(2, Data[2][indexData[index]])
 
         listBox2.insert(3, "개방시간:" + Data[3][indexData[index]])
-        listBox2.insert(3, "개방시간:" + Data[6][indexData[index]])
+        listBox2.insert(4, "공용화장실여부:" + Data[6][indexData[index]])
+        listBox2.insert(5, "남성 변기수:" + str(Data[7][indexData[index]]))
+        listBox2.insert(6, "여성 변기수:" + str(Data[8][indexData[index]]))
         print(data)
     imageLabel.setImage('Email_Close.gif')
 
@@ -394,7 +396,6 @@ def Check_Public():
             if InputLabel.get() in Data[0][i]:
                 listBox.insert(j, Data[0][i])
                 indexData.append(i)
-                listBox2
                 j = j + 1
 
 def MailButton(self):
