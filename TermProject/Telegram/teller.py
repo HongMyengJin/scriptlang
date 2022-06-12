@@ -57,16 +57,16 @@ def handle(msg):
         noti.sendMessage(chat_id, '난 텍스트 이외의 메시지는 처리하지 못해요.') 
         return
     text = msg['text'] 
-    args = text.split(' ')
+    args = text.split(',')
 
-    if text.startswith('화장실명') and len(args)>2: 
-        print('try to 화장실명', args[1]) 
+    if text.startswith('공중화장실') and len(args)>2: 
+        print('try to 공중화장실', args[1]) 
         replyAptData( args[1], chat_id, args[2] ) 
     elif text.startswith('MALE_FEMALE_TOILET_YN') and len(args)>1: 
         print('try to MALE_FEMALE_TOILET_YN', args[1]) 
         replyAptData( '202205', chat_id, args[1] ) 
     else: 
-        noti.sendMessage(chat_id, '''모르는 명령어입니다.\n거래 [YYYYMM] [지역번호]\n지역 [지역번호]\n저장 [지역번호]\n확인 중 하나의 명령을 입력하세요.\n 지역 ["종로구 11110", "중구 11140", "용산구 11170", "성동구 11200", "광진구11215", "동대문구 11230", "중랑구 11260", "성북구 11290", "강북구 11305", "도봉구 11320", "노원구 11350", "은평구 11380", "서대문구 11410", "마포구11440", "양천구 11470", "강서구 11500", "구로구 11530", "금천구 11545", "영등포구 11560", "동작구 11590", "관악구 11620", "서초구 11650", "강남구11680", "송파구 11710", "강동구 11740"]''')
+        noti.sendMessage(chat_id, '''모르는 명령어입니다.\n공중화장실, [화장실명], [((공용화장실 여부)Y or N)] 명령을 입력하세요.\n''')
     
 
 today = date.today() 
