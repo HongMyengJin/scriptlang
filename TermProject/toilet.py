@@ -5,11 +5,23 @@ import tkinter.ttk as ttk
 import folium
 import webbrowser
 from tkinter import messagebox as msg
-
 import spam
+from enum import Enum
+
 
 g_Tk = Tk()
 g_Tk.geometry("900x600+250+100")
+
+class DataEnum(Enum):
+    eName = 0
+    eAddress = 1
+    eNumber = 2
+    eOpenTime = 3
+    eLat = 4
+    eLon = 5
+    eGB_Check = 6
+    eB_Closet = 7
+    eG_Closet = 8
 
 Lat = []
 Lon = []
@@ -132,13 +144,13 @@ def InitScreen():
     InputLabel.pack(side="right", padx= 10, expand = False)
     global imageLabel
     imageLabel = ImageLabel(frameCombo, width=55, height=55)
-    imageLabel.setImage('Email_Close.gif')
+    imageLabel.setImage('image/Email_Close.gif')
     imageLabel.bind('<Button-1>', MailButton)
     imageLabel.pack(side = "right", padx= 15)
 
 
     imageLabel3 = ImageLabel(frameTitle, width=860, height=150)
-    imageLabel3.setImage('AppName.gif')
+    imageLabel3.setImage('image/AppName.gif')
     imageLabel3.pack(side = "top", expand = False)
 
     global InputEmail 
@@ -166,7 +178,7 @@ def InitScreen():
     frameMap2.pack(side="left")
     
     imageLabel2 = ImageLabel(frameMap2, width=150, height=100)
-    imageLabel2.setImage('map.gif')
+    imageLabel2.setImage('image/map.gif')
     imageLabel2.bind('<Button-1>', Pressed)
     imageLabel2.pack(side = "left", fill = X)
     
@@ -201,7 +213,7 @@ def drawGraph(canvas, data, canvasWidth, canvasHeight):
             color='blue' 
         else: 
             color="grey" 
-        curHeight = maxheight * data[i] / nMax # 최대값에 대한 비율 반영
+        curHeight = maxheight * data[i] / (nMax + 50) # 최대값에 대한 비율 반영
         top = bottom - curHeight # bar의 top 위치
         left = i * rectWidth # bar의 left 위치
         right = (i + 1) * rectWidth # bar의 right 위치
@@ -228,24 +240,27 @@ def event_for_listbox(event):
         index = selection[0]
         data = event.widget.get(index)
 
-        Lat_Data = Data[4][indexData[index]]
-        Lon_Data = Data[5][indexData[index]]
-        Name_Data = Data[0][indexData[index]]
+        Lat_Data = Data[DataEnum.eLat.value][indexData[index]]
+        Lon_Data = Data[DataEnum.eLon.value][indexData[index]]
+        Name_Data = Data[DataEnum.eName.value][indexData[index]]
         listBox2.delete(0, 6)
-
-        listBox2.insert(0, "화장실명:" + Data[0][indexData[index]])
-        listBox2.insert(1, "소재지도로명주소:" + Data[1][indexData[index]])
-        if Number[index] != None:
-            listBox2.insert(2, "전화번호:" + Data[2][indexData[index]])
-        else:
-            listBox2.insert(2, Data[2][indexData[index]])
-
-        listBox2.insert(3, "개방시간:" + Data[3][indexData[index]])
-        listBox2.insert(4, "공용화장실여부:" + Data[6][indexData[index]])
-        listBox2.insert(5, "남성 변기수:" + str(Data[7][indexData[index]]))
-        listBox2.insert(6, "여성 변기수:" + str(Data[8][indexData[index]]))
+        listBox2.insert(0, "화장실명 : " + Data[DataEnum.eName.value][indexData[index]])
+        listBox2.insert(1, "소재지도로명주소 : " + Data[DataEnum.eAddress.value][indexData[index]])
+        if Data[DataEnum.eNumber.value][indexData[index]] != None:
+            if Number[index] != None:
+                listBox2.insert(2, "전화번호 : " + Data[DataEnum.eNumber.value][indexData[index]])
+            else:
+                listBox2.insert(2, Data[DataEnum.eNumber.value][indexData[index]])
+        if Data[DataEnum.eOpenTime.value][indexData[index]] != None:
+            listBox2.insert(3, "개방시간 : " + Data[DataEnum.eOpenTime.value][indexData[index]])
+        if Data[DataEnum.eGB_Check.value][indexData[index]] != None:
+            listBox2.insert(4, "공용화장실여부 : " + Data[DataEnum.eGB_Check.value][indexData[index]])
+        if Data[DataEnum.eB_Closet.value][indexData[index]] != None:
+            listBox2.insert(5, "남성 변기수 : " + str(Data[DataEnum.eB_Closet.value][indexData[index]]))
+        if Data[DataEnum.eG_Closet.value][indexData[index]] != None:
+            listBox2.insert(6, "여성 변기수 : " + str(Data[DataEnum.eG_Closet.value][indexData[index]]))
         print(data)
-    imageLabel.setImage('Email_Close.gif')
+    imageLabel.setImage('image/Email_Close.gif')
 
     
 
@@ -265,7 +280,7 @@ def Big_ClosetData(indexData):
                 continue
         check_Insert = False
         for i in range(0, maxIndex):# 최대 5개까지만 검사
-            if(Data[7 + j][ClosetList[j][i]] <= Data[7 + j][indexData]):
+            if(Data[DataEnum.eB_Closet.value + j][ClosetList[j][i]] <= Data[DataEnum.eB_Closet.value + j][indexData]):
                 ClosetList[j].insert(i, indexData)
                 check_Insert = True
                 break
@@ -285,9 +300,8 @@ def GraphUpdate():
     if  len(ClosetList[0]) != 0:
         ListClosetN = []
         for t in range(0, len(ClosetList[0])):
-            ListClosetN.append(Data[7][ClosetList[0][t]])
-        drawGraph(w, ListClosetN, 330, 80) 
-
+            ListClosetN.append(Data[DataEnum.eB_Closet.value][ClosetList[0][t]])
+        drawGraph(w, ListClosetN, 340, 80) 
 
 def ComboChange(self):
     # 시도 자르기
@@ -349,15 +363,15 @@ def SearchCity(city):
                 getStr(item.find('PBCTLT_PLC_NM').text)
                 listBox.insert(t-1, _text)
                 
-                Data[0].insert(t - 1, item.find('PBCTLT_PLC_NM').text)
-                Data[1].insert(t - 1, item.find('REFINE_ROADNM_ADDR').text)
-                Data[2].insert(t - 1, item.find('MANAGE_INST_TELNO').text)
-                Data[3].insert(t - 1, item.find('OPEN_TM_INFO').text)
-                Data[4].insert(t - 1, item.find('REFINE_WGS84_LAT').text)
-                Data[5].insert(t - 1, item.find('REFINE_WGS84_LOGT').text)
-                Data[6].insert(t - 1, item.find('MALE_FEMALE_TOILET_YN').text)
-                Data[7].insert(t - 1, (int)(item.find('MALE_WTRCLS_CNT').text) + (int)(item.find('MALE_UIL_CNT').text))
-                Data[8].insert(t - 1, (int)(item.find('FEMALE_WTRCLS_CNT').text))
+                Data[DataEnum.eName.value].insert(t - 1, item.find('PBCTLT_PLC_NM').text)
+                Data[DataEnum.eAddress.value].insert(t - 1, item.find('REFINE_ROADNM_ADDR').text)
+                Data[DataEnum.eNumber.value].insert(t - 1, item.find('MANAGE_INST_TELNO').text)
+                Data[DataEnum.eOpenTime.value].insert(t - 1, item.find('OPEN_TM_INFO').text)
+                Data[DataEnum.eLat.value].insert(t - 1, item.find('REFINE_WGS84_LAT').text)
+                Data[DataEnum.eLon.value].insert(t - 1, item.find('REFINE_WGS84_LOGT').text)
+                Data[DataEnum.eGB_Check.value].insert(t - 1, item.find('MALE_FEMALE_TOILET_YN').text)
+                Data[DataEnum.eB_Closet.value].insert(t - 1, (int)(item.find('MALE_WTRCLS_CNT').text) + (int)(item.find('MALE_UIL_CNT').text))
+                Data[DataEnum.eG_Closet.value].insert(t - 1, (int)(item.find('FEMALE_WTRCLS_CNT').text))
 
                 Big_ClosetData(t - 1)
                 indexData.append(t - 1)
@@ -379,9 +393,9 @@ def Search_Name():
     for i in range(0, 2):
         ClosetList[i].clear()
     j = 0
-    for i in range(0, len(Data[0])):
-        if InputLabel.get() in Data[0][i]:
-            listBox.insert(j, Data[0][i])
+    for i in range(0, len(Data[DataEnum.eName.value])):
+        if InputLabel.get() in Data[DataEnum.eName.value][i]:
+            listBox.insert(j, Data[DataEnum.eName.value][i])
             Big_ClosetData(i)
             indexData.append(i)
             listBox2
@@ -397,14 +411,14 @@ def Check_Public():
 
         j = 0
         for i in range(0, listBox.size()):
-            if InputLabel.get() in Data[0][i] and Data[6][indexData[i]] == "Y":
+            if InputLabel.get() in Data[DataEnum.eName.value][indexData[i]] and Data[DataEnum.eGB_Check.value][indexData[i]] == "Y":
                 j = j + 1
                 indexData_Save.append(indexData[i])
                 
         listBox.delete(0, listBox.size())
         listBox2.delete(0, listBox2.size())
         for t in range(0, len(indexData_Save)):
-            listBox.insert(t, Data[0][indexData_Save[t]])
+            listBox.insert(t, Data[DataEnum.eName.value][indexData_Save[t]])
         
         indexData.clear()
         indexData = indexData_Save
@@ -413,9 +427,9 @@ def Check_Public():
         listBox2.delete(0, listBox2.size())
         indexData.clear()
         j = 0
-        for i in range(0, len(Data[0])):
-            if InputLabel.get() in Data[0][i]:
-                listBox.insert(j, Data[0][i])
+        for i in range(0, len(Data[DataEnum.eName.value])):
+            if InputLabel.get() in Data[DataEnum.eName.value][i]:
+                listBox.insert(j, Data[DataEnum.eName.value][i])
                 indexData.append(i)
                 j = j + 1
 
@@ -428,7 +442,7 @@ def MailButton(self):
     msgse = MIMEText(str1) 
     msgse['Subject'] = '제목: 공중화장실 데이터'
     sendMail('mongjinjin@tukorea.ac.kr', InputEmail.get(), msgse)
-    imageLabel.setImage('Email.gif')
+    imageLabel.setImage('image/Email.gif')
 
 from email.mime.text import MIMEText
 def sendMail(fromAddr, toAddr, msg):
