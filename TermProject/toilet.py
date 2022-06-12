@@ -23,6 +23,10 @@ class DataEnum(Enum):
     eB_Closet = 7
     eG_Closet = 8
 
+class G_bClosetEnum(Enum):
+    B_Closet = 0
+    G_Closet = 1
+
 Lat = []
 Lon = []
 IsPublic = []
@@ -140,7 +144,7 @@ def InitScreen():
 
     global InputLabel 
     InputLabel = Entry(frameEntry, font = fontMidium, \
-            width = 26, borderwidth = 12, relief = 'flat')
+            width = 10, borderwidth = 12, relief = 'flat')
     InputLabel.pack(side="right", padx= 10, expand = False)
     global imageLabel
     imageLabel = ImageLabel(frameCombo, width=55, height=55)
@@ -220,7 +224,9 @@ def drawGraph(canvas, data, canvasWidth, canvasHeight):
         canvas.create_rectangle(left, top, right, bottom, fill=color, tag="grim", activefill='yellow')
         # 위에 값, 아래에 번호. 
         canvas.create_text((left+right)//2, top-10, text=data[i], tags="grim") 
-        canvas.create_text((left+right)//2, bottom+10, text=i+1, tags="grim")
+
+        canvas.create_text((left+right)//2, bottom+10, text=Data[DataEnum.eName.value][ClosetList[G_bClosetEnum.B_Closet.value][i]], tags="grim")
+
     
     
     
@@ -293,15 +299,15 @@ def Big_ClosetData(indexData):
     return
 def GraphUpdate():
     for i in range(0, 2):
-        ClosetList[i] = ClosetList[i][0:5]
+        ClosetList[i] = ClosetList[i][0:3]
     for i in range(0, 2):
         print(ClosetList[i])
 
-    if  len(ClosetList[0]) != 0:
+    if  len(ClosetList[G_bClosetEnum.B_Closet.value]) != 0:
         ListClosetN = []
-        for t in range(0, len(ClosetList[0])):
-            ListClosetN.append(Data[DataEnum.eB_Closet.value][ClosetList[0][t]])
-        drawGraph(w, ListClosetN, 340, 80) 
+        for t in range(0, len(ClosetList[G_bClosetEnum.B_Closet.value])):
+            ListClosetN.append(Data[DataEnum.eB_Closet.value][ClosetList[G_bClosetEnum.B_Closet.value][t]])
+        drawGraph(w, ListClosetN, 500, 80) 
 
 def ComboChange(self):
     # 시도 자르기
