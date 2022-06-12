@@ -5,12 +5,14 @@ import tkinter.ttk as ttk
 import folium
 import webbrowser
 from tkinter import messagebox as msg
+
+import spam
+
 g_Tk = Tk()
-g_Tk.geometry("900x700+450+100")
+g_Tk.geometry("900x600+250+100")
 
 Lat = []
 Lon = []
-
 IsPublic = []
 Name = []
 Address = []
@@ -74,33 +76,20 @@ def InitScreen():
     frameTitle.pack(fill='x')
     frameCombo = Frame(g_Tk, pady=10, bg='#009933')
     frameCombo.pack(side='top', fill='x')
-    frameCheck = Frame(g_Tk, pady=10, bg='#009933')
-    frameCheck.pack(side='top', fill='x')
-    frameMail = Frame(g_Tk,padx = 15, pady=10, bg='#009933')
-    frameMail.pack(side='top', fill='x')
     frameEntry = Frame(g_Tk,padx=8.8, pady=10, bg='#009933')
     frameEntry.pack(side="top", fill="x")
     frameList = Frame(g_Tk, padx=30, pady=10, bg='#009933')
-    frameList.pack(side="top", fill="both", expand=True)
-    frameMap = Frame(g_Tk, padx=10, pady=10, bg='#009933')
-    frameMap.pack(side="bottom", fill="both", expand=True)
+    frameList.pack(side="top", fill="x")
 #경기천년제목 Medium
 
     # MainText = Label(frameTitle, font = fontTitle, text="[공중 화장실 찾기 App]")
     # MainText.pack(anchor="center", fill="both")
 
-    global chkValue
-    global CheckButton
-    chkValue = IntVar()
-    
-    CheckButton = ttk.Checkbutton(frameCombo, text="공용화장실여부", variable=chkValue, command = Check_Public).pack(side='left')
-    print(chkValue.get())
-
     global SearchListBox 
     slist = ["가평군", "고양시", "과천시","광명시", "광주시", "구리시", 
              "군포시", "김포시", "남양주시", "동두천시", "부천시", "수원시", 
              "성남시", "시흥시", "안산시", "안성시", "안양시", "양주시", 
-             "양평군", "여주시", "연천군", "오산시", "용인시", "의왕시", 
+             "양평군", "여주시", "오산시", "용인시", "의왕시", 
              "의정부시", "이천시", "파주시", "포천군", "평택시", "하남시",
              "화성시"] 
     SearchListBox = ttk.Combobox(frameCombo, values = slist)
@@ -108,15 +97,34 @@ def InitScreen():
     SearchListBox.pack(side='left', padx= 5, expand=False )
      
     SearchListBox.bind("<<ComboboxSelected>>", ComboChange)
-            
-              
-    #for i, s in enumerate(slist): 
-     #   SearchListBox.insert(i, s)
+
+
+
+    global chkValue
+    global CheckButton
+    
+    global chkBValue
+    global CheckBoy
+    
+    global chkGValue
+    global CheckGirl
+    
+    chkValue = IntVar()
+    chkBValue = IntVar()
+    chkGValue = IntVar()
+    s = ttk.Style()
+    s.configure('Green.TCheckbutton', background = '#009933', foreground = 'white')
+    
+    CheckButton = ttk.Checkbutton(frameCombo, style = 'Green.TCheckbutton', text="공용화장실여부", variable=chkValue, command = Check_Public).pack(side='left')
+    
+    CheckButton = ttk.Checkbutton(frameCombo, text="남자 개수", variable=chkBValue, command = ' ').pack(side='left')
+    CheckButton = ttk.Checkbutton(frameCombo, text="여자 개수", variable=chkGValue, command = ' ').pack(side='left')
+    print(chkValue.get())
     
     
     SearchButton = Button(frameEntry, font=fontMidium, \
            text='검색', command = Search_Name)
-    SearchButton.pack(side='right', padx= 6, expand=False, fill='y')
+    SearchButton.pack(side='right', padx= 6, expand=False)
 
     global InputLabel 
     InputLabel = Entry(frameEntry, font = fontMidium, \
@@ -141,7 +149,7 @@ def InitScreen():
     global listBox
     LBScrollbar = Scrollbar(frameList)
     listBox = Listbox(frameList, selectmode='extended',\
-    font=fontMidium, width=3, height=15, \
+    font=fontMidium, width=3, height=7, \
     borderwidth=12, relief='ridge', yscrollcommand=LBScrollbar.set)
     listBox.bind('<<ListboxSelect>>', event_for_listbox)
     listBox.pack(side='left', anchor='n', expand=True, fill="x")
@@ -165,7 +173,7 @@ def InitScreen():
     global w
     w = Canvas(frameEntry,width = 5, height=100, bg='green')
     w.pack(side='left', anchor='n', expand=True, fill="x")
-    #drawGraph(w, [10, 67, 9, 15], 250, 100) 
+
 
 def drawGraph(canvas, data, canvasWidth, canvasHeight): 
     canvas.delete("grim") # 기존 그림 지우기
@@ -177,14 +185,14 @@ def drawGraph(canvas, data, canvasWidth, canvasHeight):
     nMax = max(data) 
     nMin = min(data)
     # background 그리기
-    canvas.create_rectangle(0, 0, canvasWidth, canvasHeight, fill='white', tag="grim")
+    canvas.create_rectangle(0, 0, canvasWidth, canvasHeight, fill='green', tag="grim")
 
     if nMax == 0: # devide by zero 방지
         nMax=1
     rectWidth = (canvasWidth // nData) 
     # 데이터 1개의 폭. 
     bottom = canvasHeight - 2 # bar의 bottom 위치 
-    maxheight = canvasHeight - 4 # bar의 최대 높이.(위/아래 각각 20씩 여유.)
+    maxheight = canvasHeight - 20 # bar의 최대 높이.(위/아래 각각 20씩 여유.)
     for i in range(nData): # 각 데이터에 대해.. 
         # max/min은 특별한 색으로.
         if nMax == data[i]: 
@@ -224,6 +232,7 @@ def event_for_listbox(event):
         Lon_Data = Data[5][indexData[index]]
         Name_Data = Data[0][indexData[index]]
         listBox2.delete(0, 6)
+
         listBox2.insert(0, "화장실명:" + Data[0][indexData[index]])
         listBox2.insert(1, "소재지도로명주소:" + Data[1][indexData[index]])
         if Number[index] != None:
@@ -277,7 +286,7 @@ def GraphUpdate():
         ListClosetN = []
         for t in range(0, len(ClosetList[0])):
             ListClosetN.append(Data[7][ClosetList[0][t]])
-        drawGraph(w, ListClosetN, 250, 100) 
+        drawGraph(w, ListClosetN, 330, 80) 
 
 
 def ComboChange(self):
@@ -411,11 +420,14 @@ def Check_Public():
                 j = j + 1
 
 def MailButton(self):
-    global data
-    print(data)
-    msg = MIMEText(data) 
-    msg['Subject'] = '제목: 공중화장실 데이터'
-    sendMail('mongjinjin@tukorea.ac.kr', InputEmail.get(), msg)
+    if str(listBox2.get(0)) == '':    #보낼 메일 정보가 없으면
+       msg.showinfo("Information", "메일 보낼 정보가 없습니다.")
+       return
+   
+    str1 = str(listBox2.get(0)) +'\n' + str(listBox2.get(1)) + '\n' + str(listBox2.get(2))
+    msgse = MIMEText(str1) 
+    msgse['Subject'] = '제목: 공중화장실 데이터'
+    sendMail('mongjinjin@tukorea.ac.kr', InputEmail.get(), msgse)
     imageLabel.setImage('Email.gif')
 
 from email.mime.text import MIMEText
@@ -433,6 +445,10 @@ def Pressed(self):
     global Name_Data
     global Lat_Data
     global Lon_Data
+    if str(listBox2.get(0)) == '':    #보낼 정보가 없으면
+       msg.showinfo("Information", "지도가 보일 클릭없음")
+       return
+    
     # Create a Map with Folium and Leaflet.js (위도 경도 지정) 
     if Lat_Data  == None or Lon_Data == None: # 둘 중 하나가 None이면
         msg.showinfo("Information", "해당 위도 경도가 존재하지 않습니다.")
