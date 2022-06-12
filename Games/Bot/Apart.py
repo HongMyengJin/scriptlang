@@ -1,11 +1,17 @@
+
 from urllib.request import urlopen # 원격에서 가져오기
 from xml.dom.minidom import parseString # xml 해석하기
 # 공공데이터 포털 Key
-key = 'g+qBbnM0l4QVNO6kq/robYeLHLTDNLE6kswE/3AzzLgd3ITCBkam846UhiYvGCW1yO87/EpjoENnbn4xGNLJ0w=='
-url = 'http://openapi.molit.go.kr:8081/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?_wadl&type=xml'\
-    'LAWD_CD=11545&'\
-    'DEAL_YMD=202101&'\
-    'serviceKey='+key
-response = urlopen(url).read()
-strxml = response.decode('utf-8') # xml 해석하기
-print(parseString(strxml).toprettyxml())
+Index = '2'
+Type = 'xml'
+pSize = '200'
+key = '50e822b566c5445e99f7d7582aea21ec' 
+
+for n in range(11):
+    Index = str(n)
+    url = 'https://openapi.gg.go.kr/Publtolt?key='\
+        + key+'&pIndex=' + Index + '&Type=' + Type + '&pSize=' + pSize
+    response = urlopen(url).read()
+    strxml = response.decode('utf-8') # xml 해석하기
+    print(parseString(strxml).toprettyxml())
+

@@ -7,33 +7,53 @@ from urllib.request import urlopen
 import traceback
 from xml.etree import ElementTree
 from xml.dom.minidom import parseString
-key = 'ZuzmMcb5viQ3a2SApJ8lHnLxu0st3sTXRGVXlEtlL8bh62SZjKNRTMgjbh0sLpxIjNR5h9ShzPoE1Jg%2FpXQUiQ%3D%3D'
-TOKEN = '5307815737:AAFzAl4vAar1Hx4SRCfD_h5h_BuJ04IGsZA' 
+
+Type = 'xml'
+pSize = '1000'
+key = '50e822b566c5445e99f7d7582aea21ec' 
+
+for n in range(11):
+    Index = str(n)
+    url = 'https://openapi.gg.go.kr/Publtolt?key='\
+        + key+'&pIndex=' + Index + '&Type=' + Type + '&pSize=' + pSize
+    response = urlopen(url).read()
+    strxml = response.decode('utf-8') # xml 해석하기
+    print(parseString(strxml).toprettyxml())
+
+key = '50e822b566c5445e99f7d7582aea21ec'
+TOKEN = '5529657440:AAGR0XLgywk0b88G512odGm1yTbcpw2guAg' 
 MAX_MSG_LENGTH = 300
-baseurl ='http://openapi.molit.go.kr:8081/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?ServiceKey='+key
+baseurl ='https://openapi.gg.go.kr/Publtolt?key='+key
 bot = telepot.Bot(TOKEN)
 
 # loc_param: 지역코드, date_param: yyyymm
 # 반환 : 거래 건 별로 문자열로 표현한 리스트. 
-def getData(loc_param, date_param): 
+def getData(name_param, Male_FeMale_param):  # 이름과 공용여부
     res_list = [] 
-    url = baseurl+'&LAWD_CD='+loc_param+'&DEAL_YMD='+date_param
-    res_body = urlopen(url).read() 
-    strXml = res_body.decode('utf-8')
-    tree = ElementTree.fromstring(strXml)
-    items = tree.iter("item") # return list type
-    for item in items: 
-        amount = item.find("거래금액").text.strip()
-        build = item.find("건축년도").text
-        y = item.find("년").text
-        dong = item.find("법정동").text 
-        apt = item.find("아파트").text 
-        m = item.find("월").text
-        d = item.find("일").text 
-        n = item.find("전용면적").text 
-        row = y + '/' + m + '/' + d + ', ' + dong + ' ' + apt + '(' \
-        + build+') ' + n + 'm², ' + amount + '만원' 
-        res_list.append(row) 
+    for n in range(0, 11):
+        Index = str(n)
+        url = 'https://openapi.gg.go.kr/Publtolt?key='+ key +'&pIndex=' + Index + '&Type=' + Type + '&pSize=' + pSize
+        response = urlopen(url).read()
+        strxml = response.decode('utf-8') # xml 해석하기
+        tree = ElementTree.fromstring(strxml)
+        row = ""
+        items = tree.iter("row") # return list type
+        for item in items: 
+            name = item.find("PBCTLT_PLC_NM").text
+            Male_FeMale = item.find("MALE_FEMALE_TOILET_YN").text
+            if name_param in name and Male_FeMale_param == Male_FeMale:
+                row += "이름: " + name + '\n'
+                if item.find("REFINE_ROADNM_ADDR").text != None:
+                    row += "주소: " + item.find("REFINE_ROADNM_ADDR").text + '\n'
+                if item.find("MALE_FEMALE_TOILET_YN").text != None:
+                    row += "공용화장실: " + item.find("MALE_FEMALE_TOILET_YN").text + '\n'
+                if item.find("REFINE_WGS84_LAT").text != None:
+                    row += "위도: " + item.find("REFINE_WGS84_LAT").text + '\n'
+                if item.find("REFINE_WGS84_LOGT").text != None:
+                    row += "경도: " + item.find("REFINE_WGS84_LOGT").text + '\n'    
+                if item.find("MANAGE_INST_TELNO").text != None:
+                    row += "전화번호: " + item.find("MANAGE_INST_TELNO").text + '\n'       
+                res_list.append(row) 
     return res_list
 def sendMessage(user, msg): 
     try:

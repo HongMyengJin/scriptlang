@@ -9,15 +9,16 @@ import re
 from datetime import date, datetime
 import noti
 
-# date_param: 날짜, user: 사용자ID, loc_param:지역코드
-def replyAptData(date_param, user, loc_param='11710'): 
-    print(user, date_param, loc_param) 
-    res_list = noti.getData( loc_param, date_param )
+
+# name_param: 날짜, user: 사용자ID, Male_FeMale_param:남여 공용 여부
+def replyAptData(name_param, user, Male_FeMale_param='Y'): 
+    #print(user, name_param, Male_FeMale_param) 
+    res_list = noti.getData( name_param, Male_FeMale_param )
 # 하나씩 보내면 메세지 개수가 너무 많아지므로
 # 300자까지는 하나의 메세지로 묶어서 보내기. 
     msg = '' 
     for r in res_list: 
-        print( str(datetime.now()).split('.')[0], r )
+        #print( str(datetime.now()).split('.')[0], r )
         if len(r+msg)+1>noti.MAX_MSG_LENGTH: 
             noti.sendMessage( user, msg ) 
             msg = r+'\n' 
@@ -26,14 +27,14 @@ def replyAptData(date_param, user, loc_param='11710'):
     if msg: 
         noti.sendMessage( user, msg ) 
     else: 
-        noti.sendMessage( user, '%s 기간에 해당하는 데이터가 없습니다.'%date_param)
+        noti.sendMessage( user, '%s 기간에 해당하는 데이터가 없습니다.'%name_param)
 
-def save( user, loc_param ): 
+def save( user, Male_FeMale_param ): 
     conn = sqlite3.connect('users.db') 
     cursor = conn.cursor() 
     cursor.execute('CREATE TABLE IF NOT EXISTS \ users( user TEXT, location TEXT, PRIMARY KEY(user, location) )')
     try: 
-        cursor.execute('INSERT INTO users(user, location) VALUES ("%s", "%s")' % (user, loc_param)) 
+        cursor.execute('INSERT INTO users(user, location) VALUES ("%s", "%s")' % (user, Male_FeMale_param)) 
     except sqlite3.IntegrityError: 
         noti.sendMessage( user, '이미 해당 정보가 저장되어 있습니다.' ) 
         return
@@ -58,18 +59,12 @@ def handle(msg):
     text = msg['text'] 
     args = text.split(' ')
 
-    if text.startswith('거래') and len(args)>1: 
-        print('try to 거래', args[1]) 
+    if text.startswith('화장실명') and len(args)>2: 
+        print('try to 화장실명', args[1]) 
         replyAptData( args[1], chat_id, args[2] ) 
-    elif text.startswith('지역') and len(args)>1: 
-        print('try to 지역', args[1]) 
+    elif text.startswith('MALE_FEMALE_TOILET_YN') and len(args)>1: 
+        print('try to MALE_FEMALE_TOILET_YN', args[1]) 
         replyAptData( '202205', chat_id, args[1] ) 
-    elif text.startswith('저장') and len(args)>1: 
-        print('try to 저장', args[1]) 
-        save( chat_id, args[1] ) 
-    elif text.startswith('확인'): 
-        print('try to 확인') 
-        check( chat_id ) 
     else: 
         noti.sendMessage(chat_id, '''모르는 명령어입니다.\n거래 [YYYYMM] [지역번호]\n지역 [지역번호]\n저장 [지역번호]\n확인 중 하나의 명령을 입력하세요.\n 지역 ["종로구 11110", "중구 11140", "용산구 11170", "성동구 11200", "광진구11215", "동대문구 11230", "중랑구 11260", "성북구 11290", "강북구 11305", "도봉구 11320", "노원구 11350", "은평구 11380", "서대문구 11410", "마포구11440", "양천구 11470", "강서구 11500", "구로구 11530", "금천구 11545", "영등포구 11560", "동작구 11590", "관악구 11620", "서초구 11650", "강남구11680", "송파구 11710", "강동구 11740"]''')
     
