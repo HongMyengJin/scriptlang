@@ -238,15 +238,19 @@ def event_for_listbox(event):
         listBox2.delete(0, 6)
         listBox2.insert(0, "화장실명:" + Data[DataEnum.eName.value][indexData[index]])
         listBox2.insert(1, "소재지도로명주소:" + Data[DataEnum.eAddress.value][indexData[index]])
-        if Number[index] != None:
-            listBox2.insert(2, "전화번호:" + Data[DataEnum.eNumber.value][indexData[index]])
-        else:
-            listBox2.insert(2, Data[DataEnum.eNumber.value][indexData[index]])
-
-        listBox2.insert(3, "개방시간:" + Data[DataEnum.eOpenTime.value][indexData[index]])
-        listBox2.insert(4, "공용화장실여부:" + Data[DataEnum.eGB_Check.value][indexData[index]])
-        listBox2.insert(5, "남성 변기수:" + str(Data[DataEnum.eB_Closet.value][indexData[index]]))
-        listBox2.insert(6, "여성 변기수:" + str(Data[DataEnum.eG_Closet.value][indexData[index]]))
+        if Data[DataEnum.eNumber.value][indexData[index]] != None:
+            if Number[index] != None:
+                listBox2.insert(2, "전화번호:" + Data[DataEnum.eNumber.value][indexData[index]])
+            else:
+                listBox2.insert(2, Data[DataEnum.eNumber.value][indexData[index]])
+        if Data[DataEnum.eOpenTime.value][indexData[index]] != None:
+            listBox2.insert(3, "개방시간:" + Data[DataEnum.eOpenTime.value][indexData[index]])
+        if Data[DataEnum.eGB_Check.value][indexData[index]] != None:
+            listBox2.insert(4, "공용화장실여부:" + Data[DataEnum.eGB_Check.value][indexData[index]])
+        if Data[DataEnum.eB_Closet.value][indexData[index]] != None:
+            listBox2.insert(5, "남성 변기수:" + str(Data[DataEnum.eB_Closet.value][indexData[index]]))
+        if Data[DataEnum.eG_Closet.value][indexData[index]] != None:
+            listBox2.insert(6, "여성 변기수:" + str(Data[DataEnum.eG_Closet.value][indexData[index]]))
         print(data)
     imageLabel.setImage('Email_Close.gif')
 
@@ -400,7 +404,7 @@ def Check_Public():
 
         j = 0
         for i in range(0, listBox.size()):
-            if InputLabel.get() in Data[DataEnum.eName.value][i] and Data[DataEnum.eGB_Check.value][indexData[i]] == "Y":
+            if InputLabel.get() in Data[DataEnum.eName.value][indexData[i]] and Data[DataEnum.eGB_Check.value][indexData[i]] == "Y":
                 j = j + 1
                 indexData_Save.append(indexData[i])
                 
