@@ -2,7 +2,6 @@ from msilib.schema import CheckBox, ListBox
 from tkinter import *
 from tkinter import font
 import tkinter.ttk as ttk
-from types import NoneType
 import folium
 import webbrowser
 from tkinter import messagebox as msg
@@ -157,13 +156,9 @@ def InitScreen():
     imageLabel2.pack(side = "left", fill = X)
     
     global w
-    check = 0
     w = Canvas(frameEntry,width = 5, height=100, bg='green')
     w.pack(side='left', anchor='n', expand=True, fill="x")
-    if check == 1:
-        drawGraph(w, [Data[4][indexData[k]] for k in range(0,9)], 250, 100)
-    else:
-        drawGraph(w, 0, 250, 100)
+    drawGraph(w, [10, 67, 9, 15], 250, 100) 
 
 def drawGraph(canvas, data, canvasWidth, canvasHeight): 
     canvas.delete("grim") # 기존 그림 지우기
@@ -213,7 +208,6 @@ def event_for_listbox(event):
     global listBox2
     global indexData
     global Name_Data
-    
     selection = event.widget.curselection()
     if selection:
         index = selection[0]
@@ -267,8 +261,6 @@ def SearchCity(city):
     global Data
     global indexData
     global InputLabel
-    global check
-    check = 1
 
     InputLabel.delete(0, 'end')
     indexData.clear()
