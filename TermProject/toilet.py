@@ -165,7 +165,7 @@ def InitScreen():
     global w
     w = Canvas(frameEntry,width = 5, height=100, bg='green')
     w.pack(side='left', anchor='n', expand=True, fill="x")
-    drawGraph(w, [10, 67, 9, 15], 250, 100) 
+    #drawGraph(w, [10, 67, 9, 15], 250, 100) 
 
 def drawGraph(canvas, data, canvasWidth, canvasHeight): 
     canvas.delete("grim") # 기존 그림 지우기
@@ -245,8 +245,6 @@ def getStr(s):
 def Big_ClosetData(indexData):
     global ClosetList
 
-    
-
     for j in range(0, 2):
         maxIndex = 5
         if maxIndex > len(ClosetList[j]):
@@ -255,11 +253,13 @@ def Big_ClosetData(indexData):
                 ClosetList[j].insert(0, indexData)
                 continue
         for i in range(0, maxIndex):# 최대 5개까지만 검사
-            if(ClosetList[j][i] < Data[7 + j][indexData]):
+            if(Data[7 + j][ClosetList[j][i]] < Data[7 + j][indexData]):
                 ClosetList[j].insert(i, indexData)
                 break
 
-    return 
+
+
+    return
     
 def ComboChange(self):
     # 시도 자르기
@@ -268,10 +268,19 @@ def ComboChange(self):
         ClosetList[i].clear()
     #만약 아래 콤보값과 같으면 리스트 박스에 넣기
     SearchCity(SearchListBox.get())
+    
+    for i in range(0, 2):
+        ClosetList[i] = ClosetList[i][0:5]
     for i in range(0, 2):
         print(ClosetList[i])
-    if  len(ClosetList) != 0:
-        drawGraph(w, [10, 67, 9, 15], 250, 100) 
+
+    if  len(ClosetList[0]) != 0:
+        ListClosetN = []
+        for t in range(0, len(ClosetList[0])):
+            ListClosetN.append(Data[7][ClosetList[0][t]])
+        drawGraph(w, ListClosetN, 250, 100) 
+
+
 
 def SearchCity(city):
     from urllib.request import urlopen # 원격에서 가져오기
