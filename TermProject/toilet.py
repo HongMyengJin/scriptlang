@@ -254,23 +254,20 @@ def Big_ClosetData(indexData):
             if maxIndex == 0:
                 ClosetList[j].insert(0, indexData)
                 continue
+        check_Insert = False
         for i in range(0, maxIndex):# 최대 5개까지만 검사
-            if(Data[7 + j][ClosetList[j][i]] < Data[7 + j][indexData]):
+            if(Data[7 + j][ClosetList[j][i]] <= Data[7 + j][indexData]):
                 ClosetList[j].insert(i, indexData)
+                check_Insert = True
                 break
+                
+        if  maxIndex < 5 and check_Insert == False:
+            ClosetList[j].insert(maxIndex, indexData)
 
 
 
     return
-    
-def ComboChange(self):
-    # 시도 자르기
-    global ClosetList
-    for i in range(0, 2):
-        ClosetList[i].clear()
-    #만약 아래 콤보값과 같으면 리스트 박스에 넣기
-    SearchCity(SearchListBox.get())
-    
+def GraphUpdate():
     for i in range(0, 2):
         ClosetList[i] = ClosetList[i][0:5]
     for i in range(0, 2):
@@ -281,6 +278,16 @@ def ComboChange(self):
         for t in range(0, len(ClosetList[0])):
             ListClosetN.append(Data[7][ClosetList[0][t]])
         drawGraph(w, ListClosetN, 250, 100) 
+
+
+def ComboChange(self):
+    # 시도 자르기
+    global ClosetList
+    for i in range(0, 2):
+        ClosetList[i].clear()
+    #만약 아래 콤보값과 같으면 리스트 박스에 넣기
+    SearchCity(SearchListBox.get())
+    GraphUpdate()
 
 
 
@@ -356,16 +363,21 @@ def Search_Name():
     global listBox2
     global Data
     global indexData
+    global ClosetList
     listBox.delete(0, listBox.size())
     listBox2.delete(0, listBox2.size())
     indexData.clear()
+    for i in range(0, 2):
+        ClosetList[i].clear()
     j = 0
     for i in range(0, len(Data[0])):
         if InputLabel.get() in Data[0][i]:
             listBox.insert(j, Data[0][i])
+            Big_ClosetData(i)
             indexData.append(i)
             listBox2
             j = j + 1
+    GraphUpdate()
 
 def Check_Public():
     global listBox2
