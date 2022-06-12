@@ -133,9 +133,8 @@ def InitScreen():
     
     CheckButton = ttk.Checkbutton(frameCombo, style = 'Green.TCheckbutton', text="공용화장실여부", variable=chkValue, command = Check_Public).pack(side='left')
     
-    CheckButton = ttk.Checkbutton(frameCombo, text="남자 개수", variable=chkBValue, command = ' ').pack(side='left')
-    CheckButton = ttk.Checkbutton(frameCombo, text="여자 개수", variable=chkGValue, command = ' ').pack(side='left')
-    print(chkValue.get())
+    CheckBoy = ttk.Checkbutton(frameCombo, text="남자 개수", variable=chkBValue, command = GraphUpdate).pack(side='left')
+    CheckGirl = ttk.Checkbutton(frameCombo, text="여자 개수", variable=chkGValue, command = GraphUpdate).pack(side='left')
     
     
     SearchButton = Button(frameEntry, font=fontMidium, \
@@ -193,6 +192,8 @@ def InitScreen():
 
 def drawGraph(canvas, data, canvasWidth, canvasHeight): 
     canvas.delete("grim") # 기존 그림 지우기
+    if data == None:
+        return
     if not len(data): # 데이터 없으면 return
         canvas.create_text(canvasWidth/2,(canvasHeight/2), 
         text="No Data", tags="grim") 
@@ -298,17 +299,24 @@ def Big_ClosetData(indexData):
 
     return
 def GraphUpdate():
+    
+    ListClosetN = []
     for i in range(0, 2):
         ClosetList[i] = ClosetList[i][0:3]
     for i in range(0, 2):
         print(ClosetList[i])
 
-    if  len(ClosetList[G_bClosetEnum.B_Closet.value]) != 0:
-        ListClosetN = []
-        for t in range(0, len(ClosetList[G_bClosetEnum.B_Closet.value])):
-            ListClosetN.append(Data[DataEnum.eB_Closet.value][ClosetList[G_bClosetEnum.B_Closet.value][t]])
-        drawGraph(w, ListClosetN, 500, 80) 
-
+    if chkBValue.get() == 1:
+        if  len(ClosetList[G_bClosetEnum.B_Closet.value]) != 0:
+            for t in range(0, len(ClosetList[G_bClosetEnum.B_Closet.value])):
+                ListClosetN.append(Data[DataEnum.eB_Closet.value][ClosetList[G_bClosetEnum.B_Closet.value][t]])
+    if chkGValue.get() == 1:
+        if  len(ClosetList[G_bClosetEnum.G_Closet.value]) != 0:
+            for t in range(0, len(ClosetList[G_bClosetEnum.G_Closet.value])):
+                ListClosetN.append(Data[DataEnum.eG_Closet.value][ClosetList[G_bClosetEnum.G_Closet.value][t]])
+        
+    drawGraph(w, ListClosetN, 500, 80) 
+    
 def ComboChange(self):
     # 시도 자르기
     global ClosetList
@@ -443,8 +451,9 @@ def MailButton(self):
     if str(listBox2.get(0)) == '':    #보낼 메일 정보가 없으면
        msg.showinfo("Information", "메일 보낼 정보가 없습니다.")
        return
-   
-    str1 = str(listBox2.get(0)) +'\n' + str(listBox2.get(1)) + '\n' + str(listBox2.get(2))
+    str1 = ''
+    for i in range(0,listBox2.size()):
+        str1 = str1 + str(listBox2.get(i)) +'\n'
     msgse = MIMEText(str1) 
     msgse['Subject'] = '제목: 공중화장실 데이터'
     sendMail('mongjinjin@tukorea.ac.kr', InputEmail.get(), msgse)
