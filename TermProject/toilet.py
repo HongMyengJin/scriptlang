@@ -19,8 +19,13 @@ Number = []
 OpenTime = []
 indexData = []
 GB_Check = []
-#       0       1       2       3          4   5    6
-Data = [Name, Address, Number, OpenTime, Lat, Lon, GB_Check ]
+G_Closet = []
+B_Closet = []
+
+              #B  G
+ClosetList = [[], []]
+#       0       1       2       3          4   5    6           7          8
+Data = [Name, Address, Number, OpenTime, Lat, Lon, GB_Check, B_Closet, G_Closet]
 Lat_Data = 0.0
 Lon_Data = 0.0
 Name_Data = ""
@@ -231,27 +236,42 @@ def event_for_listbox(event):
         print(data)
     imageLabel.setImage('Email_Close.gif')
 
-        
-def onSearch(): # "검색" 버튼 이벤트처리
-
-    #global SearchListBox
-    #listBox.yview
-    #sels = SearchListBox.curselection()
-    #iSearchIndex = \
-    #    0 if len(sels) == 0 else SearchListBox.curselection()[0]
-     Search(0)
-
-
+    
 
 
 def getStr(s): 
     return '' if not s else s
 
+def Big_ClosetData(indexData):
+    global ClosetList
+
+    
+
+    for j in range(0, 2):
+        maxIndex = 5
+        if maxIndex > len(ClosetList[j]):
+            maxIndex = len(ClosetList[j])
+            if maxIndex == 0:
+                ClosetList[j].insert(0, indexData)
+                continue
+        for i in range(0, maxIndex):# 최대 5개까지만 검사
+            if(ClosetList[j][i] < Data[7 + j][indexData]):
+                ClosetList[j].insert(i, indexData)
+                break
+
+    return 
+    
 def ComboChange(self):
     # 시도 자르기
-
+    global ClosetList
+    for i in range(0, 2):
+        ClosetList[i].clear()
     #만약 아래 콤보값과 같으면 리스트 박스에 넣기
     SearchCity(SearchListBox.get())
+    for i in range(0, 2):
+        print(ClosetList[i])
+    if  len(ClosetList) != 0:
+        drawGraph(w, [10, 67, 9, 15], 250, 100) 
 
 def SearchCity(city):
     from urllib.request import urlopen # 원격에서 가져오기
@@ -301,7 +321,7 @@ def SearchCity(city):
                 _text = '[' + str(t) + '] ' + \
                 getStr(item.find('PBCTLT_PLC_NM').text)
                 listBox.insert(t-1, _text)
-
+                
                 Data[0].insert(t - 1, item.find('PBCTLT_PLC_NM').text)
                 Data[1].insert(t - 1, item.find('REFINE_ROADNM_ADDR').text)
                 Data[2].insert(t - 1, item.find('MANAGE_INST_TELNO').text)
@@ -309,6 +329,10 @@ def SearchCity(city):
                 Data[4].insert(t - 1, item.find('REFINE_WGS84_LAT').text)
                 Data[5].insert(t - 1, item.find('REFINE_WGS84_LOGT').text)
                 Data[6].insert(t - 1, item.find('MALE_FEMALE_TOILET_YN').text)
+                Data[7].insert(t - 1, (int)(item.find('MALE_WTRCLS_CNT').text) + (int)(item.find('MALE_UIL_CNT').text))
+                Data[8].insert(t - 1, (int)(item.find('FEMALE_WTRCLS_CNT').text))
+
+                Big_ClosetData(t - 1)
                 indexData.append(t - 1)
                 t = t+1
 
