@@ -193,7 +193,7 @@ def drawGraph(canvas, data, canvasWidth, canvasHeight):
             color='blue' 
         else: 
             color="grey" 
-        curHeight = maxheight * data[i] / nMax # 최대값에 대한 비율 반영
+        curHeight = maxheight * data[i] / (nMax + 50) # 최대값에 대한 비율 반영
         top = bottom - curHeight # bar의 top 위치
         left = i * rectWidth # bar의 left 위치
         right = (i + 1) * rectWidth # bar의 right 위치
