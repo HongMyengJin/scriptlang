@@ -26,6 +26,7 @@ class DataEnum(Enum):
 class G_bClosetEnum(Enum):
     B_Closet = 0
     G_Closet = 1
+    All_Closet = 2
 
 Lat = []
 Lon = []
@@ -40,6 +41,7 @@ GB_Check = []
 G_Closet = []
 B_Closet = []
 
+GBName_CheckButton = False
               #B  G
 ClosetList = [[], []]
 #       0       1       2       3          4   5    6           7          8
@@ -56,6 +58,7 @@ fontMidium2= font.Font(g_Tk, size = 14, family='경기천년제목 Medium')
 fontMidium3= font.Font(g_Tk, size = 10, family='경기천년바탕 Regular')
 fontMidium4= font.Font(g_Tk, size = 14, family='경기천년바탕 Regular')
 fontMidium5= font.Font(g_Tk, size = 13, family='경기천년바탕 Medium')
+
 class ImageLabel(Label):
     def __init__(self, parent, filenameOrUrl = None, width = 0, height = 0, imageLabel = None):
         super().__init__(parent)
@@ -91,14 +94,30 @@ def InitScreen():
     fontTitle = font.Font(g_Tk, size=22, weight='bold', family='경기천년제목 Bold')
     
     fontNormal = font.Font(g_Tk, size = 15, weight='bold')
+
+
+    
+
+    frameList = Frame(g_Tk, padx=30, pady=10, bg='#C8E6A8', width= 1550, height= 100)
+    frameList.pack(side="bottom", fill="x")
+
     frameTitle = Frame(g_Tk, padx = 10, pady=10, bg='#C8E6A8')
     frameTitle.pack(fill='x')
-    frameCombo = Frame(g_Tk, pady=10, bg='#C8E6A8')
-    frameCombo.pack(side='top', fill='x')
-    frameEntry = Frame(g_Tk,padx=8.8, pady=10, bg='#C8E6A8')
-    frameEntry.pack(side="top", fill="x")
-    frameList = Frame(g_Tk, padx=30, pady=10, bg='#C8E6A8')
-    frameList.pack(side="top", fill="x")
+    frameEntry = Frame(g_Tk, bg='#C8E6A8', width= 500, height= 200)
+    frameEntry.pack(side="top", fill="x", expand= False)
+    
+    frameCombo = Frame(g_Tk, pady=20, bg='#C8E6A8', width= 50, height= 50)
+    frameCombo.pack(side='top', fill='x', expand= False)
+    #frameCombo.place(x = 50, y = 310)
+    frameSearch = Frame(g_Tk, padx = 10, bg='#C8E6A8', width= 550, height= 50)
+    frameSearch.pack(side='top',fill = 'x')
+    frameCheck = Frame(g_Tk,  bg='#C8E6A8', width= 50, height= 18)
+
+    frameCheck.pack(side='top', fill='x', expand= False)
+    #frameCheck.place(x = 250, y = -250)
+
+    #frameCheck.place(x = 675, y = 365)
+    
 #경기천년제목 Medium
 
     # MainText = Label(frameTitle, font = fontTitle, text="[공중 화장실 찾기 App]")
@@ -135,23 +154,20 @@ def InitScreen():
     chkGValue = IntVar()
     s = ttk.Style()
     s.configure('Green.TCheckbutton', background = '#C8E6A8', foreground = 'white')
-    
-    CheckButton = Checkbutton(frameCombo, bg = '#C8E6A8', activebackground= '#C8E6A8', text="공용화장실여부", variable=chkValue, font = ("경기천년제목 Light", 11), command = Check_Public).pack(side='left')
 
-    CheckButton = Checkbutton(frameCombo, bg = '#C8E6A8', activebackground= '#C8E6A8',  text="남자 개수", font = ("경기천년제목 Light", 11), variable=chkBValue, command = ' ')
-    CheckButton.pack(side='left')
-    CheckButton = Checkbutton(frameCombo,  bg = '#C8E6A8',activebackground= '#C8E6A8',text="여자 개수", font = ("경기천년제목 Light", 11), variable=chkGValue, command = ' ').pack(side='left')
-
-    print(chkValue.get())
+    CheckButton = Checkbutton(frameCombo, bg = '#C8E6A8', activebackground= '#C8E6A8', text="공용화장실X", variable=chkValue, font = ("경기천년제목 Light", 11), command = Check_Public).pack(side='left')
     
     
-    SearchButton = Button(frameEntry, font=fontMidium, \
+    CheckBoy = Checkbutton(frameCheck, padx = 30, bg = '#C8E6A8', activebackground= '#C8E6A8',  text="남자 개수", font = ("경기천년제목 Light", 11), variable=chkBValue, command = Check_Box_B).pack(side='left')
+    CheckGirl = Checkbutton(frameCheck, padx = 0, bg = '#C8E6A8',activebackground= '#C8E6A8',text="여자 개수", font = ("경기천년제목 Light", 11), variable=chkGValue, command = Check_Box_G).pack(side='left')
+    
+    SearchButton = Button(frameSearch, font=fontMidium, \
            text='검색', command = Search_Name)
     SearchButton.pack(side='right', padx= 6, expand=False)
 
     global InputLabel 
-    InputLabel = Entry(frameEntry, font = fontMidium, \
-            width = 10, borderwidth = 6, relief = 'flat')
+    InputLabel = Entry(frameSearch, font = fontMidium, \
+            width = 32, borderwidth = 6, relief = 'flat')
     InputLabel.pack(side="right", padx= 10, expand = False)
     global imageLabel
     imageLabel = ImageLabel(frameCombo, width=40, height=35)
@@ -166,8 +182,8 @@ def InitScreen():
 
     global InputEmail 
     InputEmail = Entry(frameCombo, font = fontMidium4, \
-            width = 30, borderwidth = 8.5, relief = 'flat')
-    InputEmail.pack(side="right", pady = 20, expand = False)
+            width = 42, borderwidth = 8.5, relief = 'flat')
+    InputEmail.pack(side="right", padx = 10, expand = False)
     
     global listBox
     LBScrollbar = Scrollbar(frameList)
@@ -197,9 +213,24 @@ def InitScreen():
     w = Canvas(frameEntry,width = 5, height=100, bg='#C8E6A8')
     w.pack(side='left', anchor='n', expand=True, fill="x")
 
+def Check_Box_B():
+    global GBName_CheckButton
+    if chkBValue.get() == 1:
+        chkGValue.set(0)
+        GBName_CheckButton = True
 
+    GraphUpdate()
+
+def Check_Box_G():
+    global GBName_CheckButton
+    if chkGValue.get() == 1:
+        chkBValue.set(0)
+        GBName_CheckButton = False
+    GraphUpdate()
 def drawGraph(canvas, data, canvasWidth, canvasHeight): 
     canvas.delete("grim") # 기존 그림 지우기
+    if data == None:
+        return
     if not len(data): # 데이터 없으면 return
         canvas.create_text(canvasWidth/2,(canvasHeight/2), 
         text="No Data", tags="grim") 
@@ -231,9 +262,10 @@ def drawGraph(canvas, data, canvasWidth, canvasHeight):
         canvas.create_rectangle(left, top, right, bottom, fill=color, tag="grim", activefill='#5ec8eb')
         # 위에 값, 아래에 번호. 
         canvas.create_text((left+right)//2, top-10, text=data[i], font = fontMidium3, tags="grim") 
-
-        canvas.create_text((left+right)//2, bottom+10, font = fontMidium3, text=Data[DataEnum.eName.value][ClosetList[G_bClosetEnum.B_Closet.value][i]], tags="grim")
-
+        if GBName_CheckButton == True:
+            canvas.create_text((left+right)//2, bottom+10, font = fontMidium3, text=Data[DataEnum.eName.value][ClosetList[G_bClosetEnum.B_Closet.value][i]], tags="grim")
+        else:
+            canvas.create_text((left+right)//2, bottom+10, font = fontMidium3, text=Data[DataEnum.eName.value][ClosetList[G_bClosetEnum.G_Closet.value][i]], tags="grim")
     
     
     
@@ -305,16 +337,23 @@ def Big_ClosetData(indexData):
 
     return
 def GraphUpdate():
+    ListClosetN = []
     for i in range(0, 2):
-        ClosetList[i] = ClosetList[i][0:3]
+        ClosetList[i] = ClosetList[i][0:5]
     for i in range(0, 2):
         print(ClosetList[i])
 
-        ListClosetN = []
-        for t in range(0, len(ClosetList[G_bClosetEnum.B_Closet.value])):
-            ListClosetN.append(Data[DataEnum.eB_Closet.value][ClosetList[G_bClosetEnum.B_Closet.value][t]])
-        drawGraph(w, ListClosetN, 500, 80) 
-
+    if chkBValue.get() == 1:
+        if  len(ClosetList[G_bClosetEnum.B_Closet.value]) != 0:
+            for t in range(0, len(ClosetList[G_bClosetEnum.B_Closet.value])):
+                ListClosetN.append(Data[DataEnum.eB_Closet.value][ClosetList[G_bClosetEnum.B_Closet.value][t]])
+    if chkGValue.get() == 1:
+        if  len(ClosetList[G_bClosetEnum.G_Closet.value]) != 0:
+            for t in range(0, len(ClosetList[G_bClosetEnum.G_Closet.value])):
+                ListClosetN.append(Data[DataEnum.eG_Closet.value][ClosetList[G_bClosetEnum.G_Closet.value][t]])
+        
+    drawGraph(w, ListClosetN, 780, 80) 
+    
 def ComboChange(self):
     # 시도 자르기
     global ClosetList
@@ -449,8 +488,9 @@ def MailButton(self):
     if str(listBox2.get(0)) == '':    #보낼 메일 정보가 없으면
        msg.showinfo("Information", "메일 보낼 정보가 없습니다.")
        return
-   
-    str1 = str(listBox2.get(0)) +'\n' + str(listBox2.get(1)) + '\n' + str(listBox2.get(2))
+    str1 = ''
+    for i in range(0,listBox2.size()):
+        str1 = str1 + str(listBox2.get(i)) +'\n'
     msgse = MIMEText(str1) 
     msgse['Subject'] = '제목: 공중화장실 데이터'
     sendMail('mongjinjin@tukorea.ac.kr', InputEmail.get(), msgse)
