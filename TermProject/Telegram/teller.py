@@ -29,6 +29,25 @@ def replyAptData(name_param, user, Male_FeMale_param='Y'):
     else: 
         noti.sendMessage( user, '%s 기간에 해당하는 데이터가 없습니다.'%name_param)
 
+def replyCityAptData(city_param, user): 
+    #print(user, name_param, Male_FeMale_param) 
+    res_list = noti.getcityData(city_param)
+# 하나씩 보내면 메세지 개수가 너무 많아지므로
+# 300자까지는 하나의 메세지로 묶어서 보내기. 
+    msg = '' 
+    for r in res_list: 
+        #print( str(datetime.now()).split('.')[0], r )
+        msg = r+'\n'
+        noti.sendMessage( user, msg ) 
+         
+        # else: 
+        #     msg += r+'\n'
+    if msg: 
+        # noti.sendMessage( user, msg )
+        a = 1
+    else: 
+        noti.sendMessage( user, '%s 기간에 해당하는 데이터가 없습니다.'%city_param)
+
 def save( user, Male_FeMale_param ): 
     conn = sqlite3.connect('users.db') 
     cursor = conn.cursor() 
@@ -59,14 +78,14 @@ def handle(msg):
     text = msg['text'] 
     args = text.split(',')
 
-    if text.startswith('공중화장실') and len(args)>2: 
-        print('try to 공중화장실', args[1]) 
-        replyAptData( args[1], chat_id, args[2] ) 
-    elif text.startswith('MALE_FEMALE_TOILET_YN') and len(args)>1: 
-        print('try to MALE_FEMALE_TOILET_YN', args[1]) 
-        replyAptData( '202205', chat_id, args[1] ) 
+    if text.startswith('정보검색') and len(args)>1: 
+        print('try to 정보검색', args[1]) 
+        replyAptData( args[1], chat_id, None )
+    elif text.split(',', 1)[0] != None and text.split(',', 1)[0] == '지역별 비공용화장실 검색' and len(args)>1: 
+        print('try to 지역별 비공용화장실 검색', args[1], args[1] ) 
+        replyCityAptData( args[1], chat_id)    
     else: 
-        noti.sendMessage(chat_id, '''모르는 명령어입니다.\n공중화장실, [화장실명], [((공용화장실 여부)Y or N)] 명령을 입력하세요.\n''')
+        noti.sendMessage(chat_id, '''모르는 명령어입니다.\n정보검색, [화장실명] 명령을 입력하세요.\n\n지역별 비공용화장실 검색, [지역] 명령을 입력하세요.\n''')
     
 
 today = date.today() 

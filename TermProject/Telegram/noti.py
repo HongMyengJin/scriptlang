@@ -18,7 +18,6 @@ for n in range(11):
         + key+'&pIndex=' + Index + '&Type=' + Type + '&pSize=' + pSize
     response = urlopen(url).read()
     strxml = response.decode('utf-8') # xml 해석하기
-    print(parseString(strxml).toprettyxml())
 
 key = '50e822b566c5445e99f7d7582aea21ec'
 TOKEN = '5529657440:AAGR0XLgywk0b88G512odGm1yTbcpw2guAg' 
@@ -40,9 +39,42 @@ def getData(name_param, Male_FeMale_param):  # 이름과 공용여부
         items = tree.iter("row") # return list type
         for item in items: 
             name = item.find("PBCTLT_PLC_NM").text
-            Male_FeMale = item.find("MALE_FEMALE_TOILET_YN").text
-            if name_param in name and Male_FeMale_param == Male_FeMale:
+            if name_param in name:
                 row += "이름: " + name + '\n'
+                if item.find("REFINE_ROADNM_ADDR").text != None:
+                    row += "주소: " + item.find("REFINE_ROADNM_ADDR").text + '\n'
+                if item.find("MALE_FEMALE_TOILET_YN").text != None:
+                    row += "공용화장실: " + item.find("MALE_FEMALE_TOILET_YN").text + '\n'
+                if item.find("REFINE_WGS84_LAT").text != None:
+                    row += "위도: " + item.find("REFINE_WGS84_LAT").text + '\n'
+                if item.find("REFINE_WGS84_LOGT").text != None:
+                    row += "경도:getcityData" + item.find("REFINE_WGS84_LOGT").text + '\n'    
+                if item.find("MANAGE_INST_TELNO").text != None:
+                    row += "전화번호: " + item.find("MANAGE_INST_TELNO").text + '\n'       
+                res_list.append(row) 
+    return res_list
+def getcityData(city_param):  # 이름과 공용여부
+    res_list = [] 
+    res_listN = 0
+    for n in range(0, 11):
+        Index = str(n)
+        url = 'https://openapi.gg.go.kr/Publtolt?key='+ key +'&pIndex=' + Index + '&Type=' + Type + '&pSize=' + pSize
+        response = urlopen(url).read()
+        strxml = response.decode('utf-8') # xml 해석하기
+        tree = ElementTree.fromstring(strxml)
+        items = tree.iter("row") # return list type
+        for item in items: 
+            strings = item.find("PBCTLT_PLC_NM").text
+            if item.find('REFINE_ROADNM_ADDR').text != None and item.find('REFINE_ROADNM_ADDR').text.split(' ', 2) != None:
+                strings = item.find('REFINE_ROADNM_ADDR').text.split(' ', 2)
+                GBstrings = item.find('MALE_FEMALE_TOILET_YN').text
+            else:
+                continue
+            #print(checkbox)
+            row = ""
+            if strings[1] == city_param and GBstrings == 'N':
+                if item.find("PBCTLT_PLC_NM").text != None:
+                    row += "이름: " + item.find("PBCTLT_PLC_NM").text + '\n'
                 if item.find("REFINE_ROADNM_ADDR").text != None:
                     row += "주소: " + item.find("REFINE_ROADNM_ADDR").text + '\n'
                 if item.find("MALE_FEMALE_TOILET_YN").text != None:
@@ -53,8 +85,12 @@ def getData(name_param, Male_FeMale_param):  # 이름과 공용여부
                     row += "경도: " + item.find("REFINE_WGS84_LOGT").text + '\n'    
                 if item.find("MANAGE_INST_TELNO").text != None:
                     row += "전화번호: " + item.find("MANAGE_INST_TELNO").text + '\n'       
-                res_list.append(row) 
-    return res_list
+                res_list.append(row)
+                res_listN = res_listN + 1
+                if res_listN > 9:
+                    return  res_list
+    return  res_list
+
 def sendMessage(user, msg): 
     try:
         bot.sendMessage(user, msg) 
