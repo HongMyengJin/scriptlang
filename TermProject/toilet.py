@@ -7,6 +7,7 @@ import webbrowser
 import folium as g
 from tkinter import messagebox as msg
 import spam
+import re
 from enum import Enum
 
 
@@ -207,7 +208,7 @@ def InitScreen():
 
 
     imageLabel3 = ImageLabel(frameTitle, width=860, height=150)
-    imageLabel3.setImage('image/AppName.png')
+    imageLabel3.setImage('image/AppName.gif')
     imageLabel3.pack(side = "top", expand = False)
 
     global InputEmail 
@@ -565,7 +566,13 @@ def MailButton(self):
     if str(listBox2.get(0)) == '':    #보낼 메일 정보가 없으면
        msg.showinfo("Information", "메일 보낼 정보가 없습니다.")
        return
-    #메일 잘못 입력하면 체크 => @기준으로
+    #메일 잘못 입력하면 체크 
+    p = re.compile('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')  #이메일 형식 판별
+    emails = [str(InputEmail.get())]   
+    for email in emails:                             #입력받은 이메일을 형식과 비교
+        if p.match(email) == None:                   #False이면 이메일 오류 반환
+            msg.showinfo("Information", "잘못된 이메일 형식입니다.")
+            return 
     str1 = ''
     for i in range(0,listBox2.size()):
         str1 = str1 + str(listBox2.get(i)) +'\n'
@@ -589,11 +596,7 @@ def Pressed(self):
     global Name_Data
     global Lat_Data
     global Lon_Data
-    # if str(listBox2.get(0)) == '':    #보낼 정보가 없으면
-    #    msg.showinfo("Information", "지도가 보일 클릭없음")
-    #    return
     
-    # Create a Map with Folium and Leaflet.js (위도 경도 지정) 
     if Lat_Data  == None or Lon_Data == None: # 둘 중 하나가 None이면
         msg.showinfo("Information", "해당 위도 경도가 존재하지 않습니다.")
         return
@@ -617,7 +620,7 @@ def Book_Mark(Data):
     webbrowser.open_new('osm.html')
 
 def Favorit_ButtonEvt():
-    if str(listBox2.get(0)) == '':    #보낼 메일 정보가 없으면
+    if str(listBox2.get(0)) == '':    #추가할 정보가 없으면
        msg.showinfo("Information", "즐겨찾기에 추가할 정보가 없습니다.")
        return
     for i in range (0, listBox3.size()):  #중복되는 값이 있으면

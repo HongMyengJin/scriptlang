@@ -6,8 +6,8 @@ setup(
     name='toilet', 
     version='1.0',
     py_modules=['toilet'],
-    packages=['image'], 
-    package_data = {'image': ['*.gif']},
+    packages=['image', 'Telegram'], 
+    package_data = {'image': ['*.gif'], 'Telegram' : ['*.py']},
     
     ext_modules=[module_spam]
 )
