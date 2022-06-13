@@ -489,7 +489,7 @@ def SearchCity(city):
                 Data[DataEnum.eLat.value].insert(t - 1, item.find('REFINE_WGS84_LAT').text)
                 Data[DataEnum.eLon.value].insert(t - 1, item.find('REFINE_WGS84_LOGT').text)
                 Data[DataEnum.eGB_Check.value].insert(t - 1, item.find('MALE_FEMALE_TOILET_YN').text)
-                Data[DataEnum.eB_Closet.value].insert(t - 1, (int)(item.find('MALE_WTRCLS_CNT').text) + (int)(item.find('MALE_UIL_CNT').text))
+                Data[DataEnum.eB_Closet.value].insert(t - 1, spam.strtoint(item.find('MALE_WTRCLS_CNT').text) + (int)(item.find('MALE_UIL_CNT').text))
                 Data[DataEnum.eG_Closet.value].insert(t - 1, (int)(item.find('FEMALE_WTRCLS_CNT').text))
 
                 Big_ClosetData(t - 1)
