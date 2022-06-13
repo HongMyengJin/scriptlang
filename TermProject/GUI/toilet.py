@@ -58,13 +58,13 @@ data =""
 
 CurListBox3Index = None
 book_Mark = [[],[]]
-fontMidium= font.Font(g_Tk, size = 15, family='경기천년제목 Bold')
-fontMidium1 = font.Font(g_Tk, size = 13, family='경기천년제목 Bold')
-fontMidium2= font.Font(g_Tk, size = 10, family='경기천년제목 Medium')
+fontMidium= font.Font(g_Tk, size = 15, family='경기천년제목B Bold')
+fontMidium1 = font.Font(g_Tk, size = 13, family='경기천년제목B Bold')
+fontMidium2= font.Font(g_Tk, size = 10, family='경기천년제목M Medium')
 fontMidium3= font.Font(g_Tk, size = 7, family='경기천년바탕 Bold')
 fontMidium4= font.Font(g_Tk, size = 14, family='경기천년바탕 Regular')
 fontMidium5= font.Font(g_Tk, size = 13, family='경기천년바탕 Medium')
-fontMidium6= font.Font(g_Tk, size = 11, family='경기천년제목 Medium')
+fontMidium6= font.Font(g_Tk, size = 11, family='경기천년제목M Medium')
 class ImageLabel(Label):
     def __init__(self, parent, filenameOrUrl = None, width = 0, height = 0, imageLabel = None):
         super().__init__(parent)
@@ -97,7 +97,7 @@ class ImageLabel(Label):
 
 
 def InitScreen():
-    fontTitle = font.Font(g_Tk, size=22, weight='bold', family='경기천년제목 Bold')
+    fontTitle = font.Font(g_Tk, size=22, weight='bold', family='경기천년제목B Bold')
     
     fontNormal = font.Font(g_Tk, size = 15, weight='bold')
 
@@ -157,7 +157,7 @@ def InitScreen():
     SearchListBox = ttk.Combobox(frameCombo, values = slist)
     SearchListBox.set('시/군 선택')    
     SearchListBox.pack(side='left', padx= 5, expand=False )
-    SearchListBox.configure(font=("경기천년제목 Light", 16))
+    SearchListBox.configure(font=("경기천년제목L Light", 16))
      
     SearchListBox.bind("<<ComboboxSelected>>", ComboChange)
     
@@ -179,11 +179,11 @@ def InitScreen():
     s = ttk.Style()
     s.configure('Green.TCheckbutton', background = '#C8E6A8', foreground = 'white')
 
-    CheckButton = Checkbutton(frameCombo, bg = '#C8E6A8', activebackground= '#C8E6A8', text="공용화장실X", variable=chkValue, font = ("경기천년제목 Light", 11), command = Check_Public).pack(side='left')
+    CheckButton = Checkbutton(frameCombo, bg = '#C8E6A8', activebackground= '#C8E6A8', text="공용화장실X", variable=chkValue, font = ("경기천년제목L Light", 11), command = Check_Public).pack(side='left')
     
     
-    CheckBoy = Checkbutton(frameCheck, padx = 5, bg = '#C8E6A8', activebackground= '#C8E6A8',  text="남자 개수", font = ("경기천년제목 Light", 11), variable=chkBValue, command = Check_Box_B).pack(side='left', fill  = "y")
-    CheckGirl = Checkbutton(frameCheck, padx = 0, bg = '#C8E6A8',activebackground= '#C8E6A8',text="여자 개수", font = ("경기천년제목 Light", 11), variable=chkGValue, command = Check_Box_G).pack(side='left', fill  = "y")
+    CheckBoy = Checkbutton(frameCheck, padx = 5, bg = '#C8E6A8', activebackground= '#C8E6A8',  text="남자 개수", font = ("경기천년제목L Light", 11), variable=chkBValue, command = Check_Box_B).pack(side='left', fill  = "y")
+    CheckGirl = Checkbutton(frameCheck, padx = 0, bg = '#C8E6A8',activebackground= '#C8E6A8',text="여자 개수", font = ("경기천년제목L Light", 11), variable=chkGValue, command = Check_Box_G).pack(side='left', fill  = "y")
     
 
     FavoritButton = Button(frameEntry, font=fontMidium2, \
@@ -596,6 +596,10 @@ def Pressed(self):
     global Name_Data
     global Lat_Data
     global Lon_Data
+    
+    if str(listBox2.get(0)) == '':    #보낼 정보가 없으면
+       msg.showinfo("Information", "지도가 보일 클릭없음")
+       return
     
     if Lat_Data  == None or Lon_Data == None: # 둘 중 하나가 None이면
         msg.showinfo("Information", "해당 위도 경도가 존재하지 않습니다.")

@@ -2,7 +2,12 @@
 setup.py
 spammodule.c
 toilet.py
+Telegram\Apart.py
+Telegram\Bot.py
+Telegram\noti.py
+Telegram\teller.py
 image\AppName.gif
 image\Email.gif
 image\Email_Close.gif
+image\Search.gif
 image\map.gif
